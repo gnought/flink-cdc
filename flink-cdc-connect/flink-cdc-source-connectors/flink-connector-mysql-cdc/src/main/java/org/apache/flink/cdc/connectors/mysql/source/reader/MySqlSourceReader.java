@@ -105,7 +105,9 @@ public class MySqlSourceReader<T>
         this.mySqlSourceReaderContext = context;
         this.suspendedBinlogSplit = null;
         this.partition =
-                new MySqlPartition(sourceConfig.getMySqlConnectorConfig().getLogicalName());
+                new MySqlPartition(
+                        sourceConfig.getMySqlConnectorConfig().getLogicalName(),
+                        sourceConfig.getMySqlConnectorConfig().getJdbcConfig().getDatabase());
     }
 
     @Override

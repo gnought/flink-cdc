@@ -41,7 +41,9 @@ public class MySqlMetadataAccessor implements MetadataAccessor {
     public MySqlMetadataAccessor(MySqlSourceConfig sourceConfig) {
         this.sourceConfig = sourceConfig;
         this.partition =
-                new MySqlPartition(sourceConfig.getMySqlConnectorConfig().getLogicalName());
+                new MySqlPartition(
+                        sourceConfig.getMySqlConnectorConfig().getLogicalName(),
+                        sourceConfig.getMySqlConnectorConfig().getJdbcConfig().getDatabase());
     }
 
     /**
