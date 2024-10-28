@@ -3,7 +3,6 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.connector.mysql;
 
 import io.debezium.annotation.Immutable;
@@ -35,10 +34,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Copied from Debezium project(1.9.8.final) to add BIGINT and SMALLINT to TRIM_DATA_TYPES. Remove
+ * Copied from Debezium project(2.0.1.final) to add BIGINT and SMALLINT to TRIM_DATA_TYPES. Remove
  * this until https://issues.redhat.com/browse/DBZ-6824 is fixed in 2.3.3.Final.
  *
- * <p>Line 81 & 82: add BIGINT and SMALLINT to TRIM_DATA_TYPES.
+ * <p>Line 88 & 89: add BIGINT and SMALLINT to TRIM_DATA_TYPES.
+ */
+/**
+ * This class is used by a DDL parser to convert the string default value to a Java type recognized
+ * by value converters for a subset of types. The functionality is kept separate from the main
+ * converters to centralize the formatting logic if necessary.
+ *
+ * @author Jiri Pechanec
+ * @see com.github.shyiko.mysql.binlog.event.deserialization.AbstractRowsEventDataDeserializer
  */
 @Immutable
 public class MySqlDefaultValueConverter implements DefaultValueConverter {
@@ -399,7 +406,7 @@ public class MySqlDefaultValueConverter implements DefaultValueConverter {
     }
 
     /**
-     * Clean input timestamp to yyyy-mm-dd hh:mm:ss[.fffffffff] format.
+     * Clean input timestamp to yyyy-mm-dd hh:mm:ss[.fffffffff] format
      *
      * @param s input timestamp
      * @return cleaned timestamp
@@ -426,8 +433,8 @@ public class MySqlDefaultValueConverter implements DefaultValueConverter {
             }
         }
 
-        final int maxMonth = 12;
-        final int maxDay = 31;
+        final int MAX_MONTH = 12;
+        final int MAX_DAY = 31;
 
         // Parse the date
         int firstDash = s.indexOf('-');
@@ -458,7 +465,7 @@ public class MySqlDefaultValueConverter implements DefaultValueConverter {
                 day = Integer.parseInt(s.substring(secondDash + 1, len));
             }
 
-            if ((month >= 1 && month <= maxMonth) && (day >= 1 && day <= maxDay)) {
+            if ((month >= 1 && month <= MAX_MONTH) && (day >= 1 && day <= MAX_DAY)) {
                 parsedDate = true;
             }
         }
@@ -504,7 +511,7 @@ public class MySqlDefaultValueConverter implements DefaultValueConverter {
     }
 
     /**
-     * Replace the first non-numeric substring.
+     * Replace the first non-numeric substring
      *
      * @param s the original string
      * @param startIndex the beginning index, inclusive
