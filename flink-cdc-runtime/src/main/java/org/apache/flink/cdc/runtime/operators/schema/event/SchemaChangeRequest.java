@@ -34,8 +34,10 @@ public class SchemaChangeRequest implements CoordinationRequest {
 
     /** The sender of the request. */
     private final TableId tableId;
+
     /** The schema changes. */
     private final SchemaChangeEvent schemaChangeEvent;
+
     /** The ID of subTask that initiated the request. */
     private final int subTaskId;
 

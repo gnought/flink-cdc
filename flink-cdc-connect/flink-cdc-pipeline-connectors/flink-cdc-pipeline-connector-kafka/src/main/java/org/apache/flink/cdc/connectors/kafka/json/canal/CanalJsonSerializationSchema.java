@@ -140,7 +140,10 @@ public class CanalJsonSerializationSchema implements SerializationSchema<Event> 
         reuseGenericRowData.setField(
                 5,
                 new GenericArrayData(
-                        jsonSerializers.get(dataChangeEvent.tableId()).getSchema().primaryKeys()
+                        jsonSerializers
+                                .get(dataChangeEvent.tableId())
+                                .getSchema()
+                                .primaryKeys()
                                 .stream()
                                 .map(StringData::fromString)
                                 .toArray()));

@@ -83,6 +83,7 @@ public class SchemaRegistry implements OperatorCoordinator, CoordinationRequestH
 
     /** The context of the coordinator. */
     private final OperatorCoordinator.Context context;
+
     /** The name of the operator this SchemaOperatorCoordinator is associated with. */
     private final String operatorName;
 

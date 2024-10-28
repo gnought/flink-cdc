@@ -172,8 +172,11 @@ public class PaimonSinkITCase {
     @ParameterizedTest
     @ValueSource(strings = {"filesystem", "hive"})
     public void testSinkWithDataChange(String metastore)
-            throws IOException, InterruptedException, Catalog.DatabaseNotEmptyException,
-                    Catalog.DatabaseNotExistException, SchemaEvolveException {
+            throws IOException,
+                    InterruptedException,
+                    Catalog.DatabaseNotEmptyException,
+                    Catalog.DatabaseNotExistException,
+                    SchemaEvolveException {
         initialize(metastore);
         PaimonSink<Event> paimonSink =
                 new PaimonSink<>(
@@ -258,8 +261,11 @@ public class PaimonSinkITCase {
     @ParameterizedTest
     @ValueSource(strings = {"filesystem", "hive"})
     public void testSinkWithSchemaChange(String metastore)
-            throws IOException, InterruptedException, Catalog.DatabaseNotEmptyException,
-                    Catalog.DatabaseNotExistException, SchemaEvolveException {
+            throws IOException,
+                    InterruptedException,
+                    Catalog.DatabaseNotEmptyException,
+                    Catalog.DatabaseNotExistException,
+                    SchemaEvolveException {
         initialize(metastore);
         PaimonSink<Event> paimonSink =
                 new PaimonSink(
@@ -393,8 +399,11 @@ public class PaimonSinkITCase {
     @ParameterizedTest
     @ValueSource(strings = {"filesystem", "hive"})
     public void testSinkWithMultiTables(String metastore)
-            throws IOException, InterruptedException, Catalog.DatabaseNotEmptyException,
-                    Catalog.DatabaseNotExistException, SchemaEvolveException {
+            throws IOException,
+                    InterruptedException,
+                    Catalog.DatabaseNotEmptyException,
+                    Catalog.DatabaseNotExistException,
+                    SchemaEvolveException {
         initialize(metastore);
         PaimonSink<Event> paimonSink =
                 new PaimonSink<>(

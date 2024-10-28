@@ -68,8 +68,10 @@ public class SchemaRegistryRequestHandler implements Closeable {
 
     /** The {@link MetadataApplier} for every table. */
     private final MetadataApplier metadataApplier;
+
     /** All active sink writers. */
     private final Set<Integer> activeSinkWriters;
+
     /** Schema manager holding schema for all tables. */
     private final SchemaManager schemaManager;
 
