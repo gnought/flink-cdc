@@ -45,14 +45,12 @@ public class PostgresObjectUtils {
     public static PostgresSchema newSchema(
             PostgresConnection connection,
             PostgresConnectorConfig config,
-            TypeRegistry typeRegistry,
             TopicNamingStrategy<TableId> topicNamingStrategy,
             PostgresValueConverter valueConverter)
             throws SQLException {
         PostgresSchema schema =
                 new PostgresSchema(
                         config,
-                        typeRegistry,
                         connection.getDefaultValueConverter(),
                         topicNamingStrategy,
                         valueConverter);
