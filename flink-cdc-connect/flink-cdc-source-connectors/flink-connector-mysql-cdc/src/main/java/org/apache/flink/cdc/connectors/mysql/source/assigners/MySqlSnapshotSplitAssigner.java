@@ -167,7 +167,9 @@ public class MySqlSnapshotSplitAssigner implements MySqlSplitAssigner {
         this.chunkSplitter =
                 createChunkSplitter(sourceConfig, isTableIdCaseSensitive, chunkSplitterState);
         this.partition =
-                new MySqlPartition(sourceConfig.getMySqlConnectorConfig().getLogicalName());
+                new MySqlPartition(
+                        sourceConfig.getMySqlConnectorConfig().getLogicalName(),
+                        sourceConfig.getMySqlConnectorConfig().getJdbcConfig().getDatabase());
     }
 
     @Override

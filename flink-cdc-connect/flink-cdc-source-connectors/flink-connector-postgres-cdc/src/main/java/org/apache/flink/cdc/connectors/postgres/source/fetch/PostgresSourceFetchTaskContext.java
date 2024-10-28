@@ -187,7 +187,8 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.offsetContext =
                 loadStartingOffsetState(
                         new PostgresOffsetContext.Loader(dbzConfig), sourceSplitBase);
-        this.partition = new PostgresPartition(dbzConfig.getLogicalName());
+        this.partition =
+                new PostgresPartition(dbzConfig.getLogicalName(), dbzConfig.databaseName());
         this.taskContext =
                 PostgresObjectUtils.newTaskContext(dbzConfig, schema, topicNamingStrategy);
 

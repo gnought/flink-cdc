@@ -111,7 +111,8 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.offsetContext =
                 loadStartingOffsetState(
                         new MySqlOffsetContext.Loader(connectorConfig), sourceSplitBase);
-        this.mySqlPartition = new MySqlPartition(connectorConfig.getLogicalName());
+        this.mySqlPartition =
+                new MySqlPartition(connectorConfig.getLogicalName(), connection.database());
 
         validateAndLoadDatabaseHistory(offsetContext, databaseSchema);
 

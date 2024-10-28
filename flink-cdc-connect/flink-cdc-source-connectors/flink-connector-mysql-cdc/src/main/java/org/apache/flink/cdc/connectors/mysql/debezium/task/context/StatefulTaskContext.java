@@ -123,7 +123,10 @@ public class StatefulTaskContext {
         this.databaseSchema =
                 DebeziumUtils.createMySqlDatabaseSchema(connectorConfig, tableIdCaseInsensitive);
 
-        this.mySqlPartition = new MySqlPartition(connectorConfig.getLogicalName());
+        this.mySqlPartition =
+                new MySqlPartition(
+                        connectorConfig.getLogicalName(),
+                        connectorConfig.getJdbcConfig().getDatabase());
 
         this.offsetContext =
                 loadStartingOffsetState(new MySqlOffsetContext.Loader(connectorConfig), mySqlSplit);
