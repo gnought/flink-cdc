@@ -42,7 +42,6 @@ import io.debezium.connector.postgresql.PostgresOffsetContext;
 import io.debezium.connector.postgresql.PostgresPartition;
 import io.debezium.connector.postgresql.PostgresSchema;
 import io.debezium.connector.postgresql.PostgresTaskContext;
-import io.debezium.connector.postgresql.PostgresTopicSelector;
 import io.debezium.connector.postgresql.connection.PostgresConnection;
 import io.debezium.connector.postgresql.connection.ReplicationConnection;
 import io.debezium.connector.postgresql.spi.Snapshotter;
@@ -58,7 +57,7 @@ import io.debezium.relational.Column;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
-import io.debezium.schema.TopicSelector;
+import io.debezium.spi.topic.TopicNamingStrategy;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.slf4j.Logger;
@@ -165,7 +164,8 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                 new PostgresConnection(
                         dbzConfig.getJdbcConfig(), valueConverterBuilder, CONNECTION_NAME);
 
-        TopicSelector<TableId> topicSelector = PostgresTopicSelector.create(dbzConfig);
+        TopicNamingStrategy<TableId> topicNamingStrategy =
+                dbzConfig.getTopicNamingStrategy(PostgresConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
                 sourceConfig
                         .getDbzConfiguration()
@@ -178,7 +178,7 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                             jdbcConnection,
                             dbzConfig,
                             jdbcConnection.getTypeRegistry(),
-                            topicSelector,
+                            topicNamingStrategy,
                             valueConverterBuilder.build(jdbcConnection.getTypeRegistry()));
         } catch (SQLException e) {
             throw new RuntimeException("Failed to initialize PostgresSchema", e);
@@ -188,7 +188,8 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                 loadStartingOffsetState(
                         new PostgresOffsetContext.Loader(dbzConfig), sourceSplitBase);
         this.partition = new PostgresPartition(dbzConfig.getLogicalName());
-        this.taskContext = PostgresObjectUtils.newTaskContext(dbzConfig, schema, topicSelector);
+        this.taskContext =
+                PostgresObjectUtils.newTaskContext(dbzConfig, schema, topicNamingStrategy);
 
         if (replicationConnection == null) {
             replicationConnection =
@@ -218,7 +219,7 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.dispatcher =
                 new JdbcSourceEventDispatcher<>(
                         dbzConfig,
-                        topicSelector,
+                        topicNamingStrategy,
                         schema,
                         queue,
                         dbzConfig.getTableFilters().dataCollectionFilter(),
@@ -230,7 +231,7 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.postgresDispatcher =
                 new PostgresEventDispatcher<>(
                         dbzConfig,
-                        topicSelector,
+                        topicNamingStrategy,
                         schema,
                         queue,
                         dbzConfig.getTableFilters().dataCollectionFilter(),
