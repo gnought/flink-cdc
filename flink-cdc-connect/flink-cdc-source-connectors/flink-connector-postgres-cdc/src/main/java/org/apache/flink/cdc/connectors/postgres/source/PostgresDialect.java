@@ -111,7 +111,6 @@ public class PostgresDialect implements JdbcDataSourceDialect {
                     PostgresObjectUtils.newSchema(
                             jdbcConnection,
                             pgConnectorConfig,
-                            jdbcConnection.getTypeRegistry(),
                             topicNamingStrategy,
                             valueConverterBuilder.build(jdbcConnection.getTypeRegistry()));
             PostgresTaskContext taskContext =

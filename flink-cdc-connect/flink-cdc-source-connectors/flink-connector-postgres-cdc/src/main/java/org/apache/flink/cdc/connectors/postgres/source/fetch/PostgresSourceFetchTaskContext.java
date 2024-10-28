@@ -176,7 +176,6 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                     PostgresObjectUtils.newSchema(
                             jdbcConnection,
                             dbzConfig,
-                            jdbcConnection.getTypeRegistry(),
                             topicNamingStrategy,
                             valueConverterBuilder.build(jdbcConnection.getTypeRegistry()));
         } catch (SQLException e) {
