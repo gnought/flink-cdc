@@ -42,7 +42,6 @@ import io.debezium.connector.mysql.MySqlOffsetContext;
 import io.debezium.connector.mysql.MySqlPartition;
 import io.debezium.connector.mysql.MySqlStreamingChangeEventSourceMetrics;
 import io.debezium.connector.mysql.MySqlTaskContext;
-import io.debezium.connector.mysql.MySqlTopicSelector;
 import io.debezium.data.Envelope;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.ErrorHandler;
@@ -53,8 +52,8 @@ import io.debezium.pipeline.spi.Offsets;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
-import io.debezium.schema.DataCollectionId;
-import io.debezium.schema.TopicSelector;
+import io.debezium.spi.schema.DataCollectionId;
+import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Collect;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -78,7 +77,7 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
     private MySqlOffsetContext offsetContext;
     private SnapshotChangeEventSourceMetrics<MySqlPartition> snapshotChangeEventSourceMetrics;
     private MySqlStreamingChangeEventSourceMetrics streamingChangeEventSourceMetrics;
-    private TopicSelector<TableId> topicSelector;
+    private TopicNamingStrategy<TableId> topicNamingStrategy;
     private JdbcSourceEventDispatcher<MySqlPartition> dispatcher;
     private MySqlPartition mySqlPartition;
     private ChangeEventQueue<DataChangeEvent> queue;
@@ -100,7 +99,8 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         // initial stateful objects
         final MySqlConnectorConfig connectorConfig = getDbzConnectorConfig();
         final boolean tableIdCaseInsensitive = connection.isTableIdCaseSensitive();
-        this.topicSelector = MySqlTopicSelector.defaultSelector(connectorConfig);
+        this.topicNamingStrategy =
+                connectorConfig.getTopicNamingStrategy(MySqlConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
                 sourceConfig
                         .getDbzConfiguration()
@@ -137,7 +137,7 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.dispatcher =
                 new JdbcSourceEventDispatcher<>(
                         connectorConfig,
-                        topicSelector,
+                        topicNamingStrategy,
                         databaseSchema,
                         queue,
                         connectorConfig.getTableFilters().dataCollectionFilter(),

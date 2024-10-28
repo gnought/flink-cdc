@@ -23,7 +23,7 @@ import io.debezium.connector.postgresql.connection.PostgresConnection;
 import io.debezium.connector.postgresql.connection.ReplicationConnection;
 import io.debezium.connector.postgresql.spi.SlotState;
 import io.debezium.relational.TableId;
-import io.debezium.schema.TopicSelector;
+import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Clock;
 import io.debezium.util.Metronome;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class PostgresObjectUtils {
             PostgresConnection connection,
             PostgresConnectorConfig config,
             TypeRegistry typeRegistry,
-            TopicSelector<TableId> topicSelector,
+            TopicNamingStrategy<TableId> topicNamingStrategy,
             PostgresValueConverter valueConverter)
             throws SQLException {
         PostgresSchema schema =
@@ -54,7 +54,7 @@ public class PostgresObjectUtils {
                         config,
                         typeRegistry,
                         connection.getDefaultValueConverter(),
-                        topicSelector,
+                        topicNamingStrategy,
                         valueConverter);
         schema.refresh(connection, false);
         return schema;
@@ -63,8 +63,8 @@ public class PostgresObjectUtils {
     public static PostgresTaskContext newTaskContext(
             PostgresConnectorConfig connectorConfig,
             PostgresSchema schema,
-            TopicSelector<TableId> topicSelector) {
-        return new PostgresTaskContext(connectorConfig, schema, topicSelector);
+            TopicNamingStrategy<TableId> topicNamingStrategy) {
+        return new PostgresTaskContext(connectorConfig, schema, topicNamingStrategy);
     }
 
     public static PostgresEventMetadataProvider newEventMetadataProvider() {
