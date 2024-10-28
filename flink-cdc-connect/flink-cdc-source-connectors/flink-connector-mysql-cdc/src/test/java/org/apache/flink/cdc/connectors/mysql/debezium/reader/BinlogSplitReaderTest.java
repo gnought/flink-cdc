@@ -911,7 +911,8 @@ public class BinlogSplitReaderTest extends MySqlSourceTestBase {
             Map<TableId, TableChanges.TableChange> tableSchemas =
                     TableDiscoveryUtils.discoverSchemaForCapturedTables(
                             new MySqlPartition(
-                                    sourceConfig.getMySqlConnectorConfig().getLogicalName()),
+                                    sourceConfig.getMySqlConnectorConfig().getLogicalName(),
+                                    customerDatabase.getDatabaseName()),
                             sourceConfig,
                             jdbc);
             return MySqlBinlogSplit.fillTableSchemas(

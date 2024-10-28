@@ -114,7 +114,9 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.offsetContext =
                 loadStartingOffsetState(
                         new LogMinerOracleOffsetContextLoader(connectorConfig), sourceSplitBase);
-        this.partition = new OraclePartition(connectorConfig.getLogicalName());
+        this.partition =
+                new OraclePartition(
+                        connectorConfig.getLogicalName(), connectorConfig.getDatabaseName());
         validateAndLoadDatabaseHistory(offsetContext, databaseSchema);
 
         this.taskContext = new OracleTaskContext(connectorConfig, databaseSchema);
