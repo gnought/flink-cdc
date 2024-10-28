@@ -26,6 +26,7 @@ import org.apache.flink.util.FlinkRuntimeException;
 import io.debezium.connector.db2.Db2Connection;
 import io.debezium.connector.db2.Db2ConnectorConfig;
 import io.debezium.connector.db2.Db2DatabaseSchema;
+import io.debezium.connector.db2.Db2ValueConverters;
 import io.debezium.connector.db2.Lsn;
 import io.debezium.connector.db2.SourceInfo;
 import io.debezium.jdbc.JdbcConnection;
@@ -231,9 +232,16 @@ public class Db2Utils {
         TopicNamingStrategy<TableId> topicNamingStrategy =
                 connectorConfig.getTopicNamingStrategy(Db2ConnectorConfig.TOPIC_NAMING_STRATEGY);
         SchemaNameAdjuster schemaNameAdjuster = SchemaNameAdjuster.create();
-
+        Db2ValueConverters valueConverters =
+                new Db2ValueConverters(
+                        connectorConfig.getDecimalMode(),
+                        connectorConfig.getTemporalPrecisionMode());
         return new Db2DatabaseSchema(
-                connectorConfig, schemaNameAdjuster, topicNamingStrategy, connection);
+                connectorConfig,
+                valueConverters,
+                schemaNameAdjuster,
+                topicNamingStrategy,
+                connection);
     }
 
     // --------------------------private method-------------------------------
