@@ -33,8 +33,8 @@ import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.heartbeat.Heartbeat;
 import io.debezium.heartbeat.HeartbeatFactory;
 import io.debezium.jdbc.JdbcConfiguration;
-import io.debezium.relational.TableId;
-import io.debezium.schema.TopicSelector;
+import io.debezium.schema.DefaultTopicNamingStrategy;
+import io.debezium.spi.schema.DataCollectionId;
 import io.debezium.util.SchemaNameAdjuster;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.Test;
@@ -59,11 +59,10 @@ public class MySqlRecordEmitterTest {
                         .build();
 
         MySqlConnectorConfig mySqlConfig = new MySqlConnectorConfig(dezConf);
-        HeartbeatFactory<TableId> heartbeatFactory =
+        HeartbeatFactory<DataCollectionId> heartbeatFactory =
                 new HeartbeatFactory<>(
                         new MySqlConnectorConfig(dezConf),
-                        TopicSelector.defaultSelector(
-                                mySqlConfig, (id, prefix, delimiter) -> "fake-topic"),
+                        DefaultTopicNamingStrategy.create(mySqlConfig),
                         SchemaNameAdjuster.create());
         Heartbeat heartbeat = heartbeatFactory.createHeartbeat();
         BinlogOffset fakeOffset = BinlogOffset.ofBinlogFilePosition("fake-file", 15213L);

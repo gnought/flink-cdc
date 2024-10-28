@@ -41,7 +41,6 @@ import io.debezium.connector.sqlserver.SqlServerOffsetContext;
 import io.debezium.connector.sqlserver.SqlServerOffsetContext.Loader;
 import io.debezium.connector.sqlserver.SqlServerPartition;
 import io.debezium.connector.sqlserver.SqlServerTaskContext;
-import io.debezium.connector.sqlserver.SqlServerTopicSelector;
 import io.debezium.data.Envelope.FieldName;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.ErrorHandler;
@@ -55,8 +54,8 @@ import io.debezium.relational.Column;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables.TableFilter;
-import io.debezium.schema.DataCollectionId;
-import io.debezium.schema.TopicSelector;
+import io.debezium.spi.schema.DataCollectionId;
+import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Collect;
 import io.debezium.util.SchemaNameAdjuster;
 import org.apache.kafka.connect.data.Struct;
@@ -92,7 +91,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
     private SqlServerErrorHandler errorHandler;
     private ChangeEventQueue<DataChangeEvent> queue;
     private SqlServerTaskContext taskContext;
-    private TopicSelector<TableId> topicSelector;
+    private TopicNamingStrategy<TableId> topicNamingStrategy;
     private EventDispatcher.SnapshotReceiver<SqlServerPartition> snapshotReceiver;
     private SnapshotChangeEventSourceMetrics<SqlServerPartition> snapshotChangeEventSourceMetrics;
     private StreamingChangeEventSourceMetrics<SqlServerPartition> streamingChangeEventSourceMetrics;
@@ -112,7 +111,9 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
     public void configure(SourceSplitBase sourceSplitBase) {
         // initial stateful objects
         final SqlServerConnectorConfig connectorConfig = getDbzConnectorConfig();
-        this.topicSelector = SqlServerTopicSelector.defaultSelector(connectorConfig);
+        this.topicNamingStrategy =
+                connectorConfig.getTopicNamingStrategy(
+                        SqlServerConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
                 sourceConfig
                         .getDbzConfiguration()
@@ -148,7 +149,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
         this.dispatcher =
                 new JdbcSourceEventDispatcher<>(
                         connectorConfig,
-                        topicSelector,
+                        topicNamingStrategy,
                         databaseSchema,
                         queue,
                         connectorConfig.getTableFilters().dataCollectionFilter(),

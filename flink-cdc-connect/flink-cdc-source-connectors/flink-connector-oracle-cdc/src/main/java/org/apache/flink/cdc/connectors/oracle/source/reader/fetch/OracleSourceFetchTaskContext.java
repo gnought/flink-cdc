@@ -42,7 +42,6 @@ import io.debezium.connector.oracle.OracleOffsetContext;
 import io.debezium.connector.oracle.OraclePartition;
 import io.debezium.connector.oracle.OracleStreamingChangeEventSourceMetrics;
 import io.debezium.connector.oracle.OracleTaskContext;
-import io.debezium.connector.oracle.OracleTopicSelector;
 import io.debezium.connector.oracle.SourceInfo;
 import io.debezium.connector.oracle.logminer.LogMinerOracleOffsetContextLoader;
 import io.debezium.data.Envelope;
@@ -55,8 +54,8 @@ import io.debezium.pipeline.spi.Offsets;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
-import io.debezium.schema.DataCollectionId;
-import io.debezium.schema.TopicSelector;
+import io.debezium.spi.schema.DataCollectionId;
+import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Collect;
 import oracle.sql.ROWID;
 import org.apache.kafka.connect.data.Struct;
@@ -87,7 +86,7 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
 
     private SnapshotChangeEventSourceMetrics<OraclePartition> snapshotChangeEventSourceMetrics;
     private OracleStreamingChangeEventSourceMetrics streamingChangeEventSourceMetrics;
-    private TopicSelector<TableId> topicSelector;
+    private TopicNamingStrategy<TableId> topicNamingStrategy;
     private JdbcSourceEventDispatcher<OraclePartition> dispatcher;
     private ChangeEventQueue<DataChangeEvent> queue;
     private OracleErrorHandler errorHandler;
@@ -103,7 +102,8 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
     public void configure(SourceSplitBase sourceSplitBase) {
         // initial stateful objects
         final OracleConnectorConfig connectorConfig = getDbzConnectorConfig();
-        this.topicSelector = OracleTopicSelector.defaultSelector(connectorConfig);
+        this.topicNamingStrategy =
+                connectorConfig.getTopicNamingStrategy(OracleConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
                 sourceConfig
                         .getDbzConfiguration()
@@ -138,7 +138,7 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         this.dispatcher =
                 new JdbcSourceEventDispatcher<>(
                         connectorConfig,
-                        topicSelector,
+                        topicNamingStrategy,
                         databaseSchema,
                         queue,
                         connectorConfig.getTableFilters().dataCollectionFilter(),
