@@ -51,8 +51,7 @@ public class SqlServerConnectionUtils {
                 ((SqlServerConnectorConfig) connectorConfig).getSourceTimestampMode(),
                 valueConverters,
                 SqlServerConnectionUtils.class::getClassLoader,
-                connectorConfig.getSkippedOperations(),
-                false);
+                connectorConfig.getSkippedOperations());
     }
 
     public static List<TableId> listTables(

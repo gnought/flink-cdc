@@ -125,7 +125,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
 
         String serverName = connectorConfig.getLogicalName();
         String dbName = connectorConfig.getJdbcConfig().getDatabase();
-        this.partition = new SqlServerPartition(serverName, dbName, false);
+        this.partition = new SqlServerPartition(serverName, dbName);
 
         validateAndLoadDatabaseHistory(offsetContext, databaseSchema);
 
