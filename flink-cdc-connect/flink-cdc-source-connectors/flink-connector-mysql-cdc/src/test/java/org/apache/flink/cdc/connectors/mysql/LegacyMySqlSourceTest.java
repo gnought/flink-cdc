@@ -49,6 +49,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -752,7 +753,8 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
                                 "test",
                                 "test",
                                 "CREATE TABLE test(a int)",
-                                null)
+                                null,
+                                Instant.now())
                         .document();
         historyState.add(writer.write(document));
 
