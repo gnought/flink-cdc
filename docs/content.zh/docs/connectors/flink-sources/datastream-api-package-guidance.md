@@ -46,8 +46,8 @@ This guide provides a simple `pom.xml` example for packaging DataStream job JARs
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <scala.binary.version>2.12</scala.binary.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Enforce single fork execution due to heavy mini cluster use in the tests -->
         <flink.forkCount>1</flink.forkCount>
