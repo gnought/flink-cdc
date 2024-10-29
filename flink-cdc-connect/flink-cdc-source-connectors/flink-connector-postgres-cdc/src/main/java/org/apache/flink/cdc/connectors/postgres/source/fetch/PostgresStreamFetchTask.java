@@ -26,21 +26,12 @@ import org.apache.flink.cdc.connectors.base.source.reader.external.FetchTask;
 import org.apache.flink.cdc.connectors.postgres.source.offset.PostgresOffset;
 import org.apache.flink.util.FlinkRuntimeException;
 
-import io.debezium.connector.postgresql.PostgresConnectorConfig;
-import io.debezium.connector.postgresql.PostgresEventDispatcher;
 import io.debezium.connector.postgresql.PostgresOffsetContext;
 import io.debezium.connector.postgresql.PostgresPartition;
-import io.debezium.connector.postgresql.PostgresSchema;
 import io.debezium.connector.postgresql.PostgresStreamingChangeEventSource;
-import io.debezium.connector.postgresql.PostgresTaskContext;
 import io.debezium.connector.postgresql.connection.Lsn;
-import io.debezium.connector.postgresql.connection.PostgresConnection;
-import io.debezium.connector.postgresql.connection.ReplicationConnection;
-import io.debezium.connector.postgresql.spi.Snapshotter;
 import io.debezium.pipeline.ErrorHandler;
 import io.debezium.pipeline.source.spi.ChangeEventSource;
-import io.debezium.relational.TableId;
-import io.debezium.util.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,19 +70,7 @@ public class PostgresStreamFetchTask implements FetchTask<SourceSplitBase> {
         PostgresSourceFetchTaskContext sourceFetchContext =
                 (PostgresSourceFetchTaskContext) context;
         taskRunning = true;
-        streamSplitReadTask =
-                new StreamSplitReadTask(
-                        sourceFetchContext.getDbzConnectorConfig(),
-                        sourceFetchContext.getSnapShotter(),
-                        sourceFetchContext.getConnection(),
-                        sourceFetchContext.getDispatcher(),
-                        sourceFetchContext.getPostgresDispatcher(),
-                        sourceFetchContext.getErrorHandler(),
-                        sourceFetchContext.getTaskContext().getClock(),
-                        sourceFetchContext.getDatabaseSchema(),
-                        sourceFetchContext.getTaskContext(),
-                        sourceFetchContext.getReplicationConnection(),
-                        split);
+        streamSplitReadTask = new StreamSplitReadTask(sourceFetchContext, split);
         StoppableChangeEventSourceContext changeEventSourceContext =
                 new StoppableChangeEventSourceContext();
         streamSplitReadTask.execute(
@@ -157,7 +136,8 @@ public class PostgresStreamFetchTask implements FetchTask<SourceSplitBase> {
                         "Committing offset {} for {}",
                         Lsn.valueOf(lastCommitLsn),
                         streamSplitReadTask.streamSplit);
-                streamSplitReadTask.commitOffset(offsets);
+                streamSplitReadTask.commitOffset(
+                        streamSplitReadTask.partition.getSourcePartition(), offsets);
             }
         }
     }
@@ -170,34 +150,25 @@ public class PostgresStreamFetchTask implements FetchTask<SourceSplitBase> {
         private final ErrorHandler errorHandler;
 
         public ChangeEventSourceContext context;
+        public PostgresPartition partition;
         public PostgresOffsetContext offsetContext;
 
         public StreamSplitReadTask(
-                PostgresConnectorConfig connectorConfig,
-                Snapshotter snapshotter,
-                PostgresConnection connection,
-                JdbcSourceEventDispatcher<PostgresPartition> dispatcher,
-                PostgresEventDispatcher<TableId> postgresEventDispatcher,
-                ErrorHandler errorHandler,
-                Clock clock,
-                PostgresSchema schema,
-                PostgresTaskContext taskContext,
-                ReplicationConnection replicationConnection,
-                StreamSplit streamSplit) {
-
+                PostgresSourceFetchTaskContext sourceFetchContext, StreamSplit streamSplit) {
             super(
-                    connectorConfig,
-                    snapshotter,
-                    connection,
-                    postgresEventDispatcher,
-                    errorHandler,
-                    clock,
-                    schema,
-                    taskContext,
-                    replicationConnection);
+                    sourceFetchContext.getDbzConnectorConfig(),
+                    sourceFetchContext.getSnapShotter(),
+                    sourceFetchContext.getConnection(),
+                    sourceFetchContext.getPostgresDispatcher(),
+                    sourceFetchContext.getErrorHandler(),
+                    sourceFetchContext.getTaskContext().getClock(),
+                    sourceFetchContext.getDatabaseSchema(),
+                    sourceFetchContext.getTaskContext(),
+                    sourceFetchContext.getReplicationConnection());
+            this.partition = sourceFetchContext.getPartition();
             this.streamSplit = streamSplit;
-            this.dispatcher = dispatcher;
-            this.errorHandler = errorHandler;
+            this.dispatcher = sourceFetchContext.getDispatcher();
+            this.errorHandler = sourceFetchContext.getErrorHandler();
         }
 
         @Override
