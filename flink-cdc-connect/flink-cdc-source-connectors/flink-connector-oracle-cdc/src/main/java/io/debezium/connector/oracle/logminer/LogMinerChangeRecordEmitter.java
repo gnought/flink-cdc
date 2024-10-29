@@ -3,7 +3,6 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.connector.oracle.logminer;
 
 import io.debezium.DebeziumException;
@@ -16,18 +15,13 @@ import io.debezium.pipeline.spi.OffsetContext;
 import io.debezium.pipeline.spi.Partition;
 import io.debezium.relational.Table;
 import io.debezium.util.Clock;
-import oracle.sql.ROWID;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.header.ConnectHeaders;
-
-import java.util.Optional;
 
 /**
- * Copied from Debezium 1.9.8.Final. Emits change records based on an event read from Oracle
- * LogMiner.
+ * Copied from Debezium 2.0.1.Final
  *
  * <p>This class add RowId and overrides the emit methods to put rowId in the header.
  */
+/** Emits change records based on an event read from Oracle LogMiner. */
 public class LogMinerChangeRecordEmitter extends BaseChangeRecordEmitter<Object> {
 
     private final Operation operation;
@@ -90,12 +84,5 @@ public class LogMinerChangeRecordEmitter extends BaseChangeRecordEmitter<Object>
     @Override
     public Operation getOperation() {
         return operation;
-    }
-
-    @Override
-    protected Optional<ConnectHeaders> getEmitConnectHeaders() {
-        ConnectHeaders headers = new ConnectHeaders();
-        headers.add(ROWID.class.getSimpleName(), new SchemaAndValue(null, rowId));
-        return Optional.of(headers);
     }
 }
