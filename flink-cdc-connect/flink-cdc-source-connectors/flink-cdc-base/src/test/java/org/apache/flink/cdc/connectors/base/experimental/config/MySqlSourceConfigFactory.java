@@ -28,6 +28,7 @@ import io.debezium.relational.history.SchemaHistory;
 import java.util.Properties;
 import java.util.UUID;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.cdc.connectors.base.utils.EnvironmentUtils.checkSupportCheckpointsAfterTasksFinished;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
@@ -60,7 +61,7 @@ public class MySqlSourceConfigFactory extends JdbcSourceConfigFactory {
         // unique across all other connectors, since it is used as a prefix for all
         // Kafka topic names emanating from this connector.
         // Only alphanumeric characters and underscores should be used.
-        props.setProperty("database.server.name", "mysql_binlog_source");
+        props.setProperty(TOPIC_PREFIX.name(), "mysql_binlog_source");
         props.setProperty("database.hostname", checkNotNull(hostname));
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
