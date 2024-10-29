@@ -26,6 +26,7 @@ import io.debezium.connector.vitess.VitessConnector;
 
 import java.util.Properties;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
@@ -263,7 +264,7 @@ public class VitessSource {
             // Vtgate server/cluster being monitored. The logical name should be unique across
             // all other connectors, since it is used as a prefix for all Kafka topic names coming
             // from this connector. Only alphanumeric characters and underscores should be used.
-            props.setProperty("database.server.name", "vitess_cdc_source");
+            props.setProperty(TOPIC_PREFIX.name(), "vitess_cdc_source");
             props.setProperty("database.hostname", checkNotNull(hostname));
             props.setProperty("database.port", String.valueOf(port));
             props.setProperty("vitess.keyspace", checkNotNull(keyspace));

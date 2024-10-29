@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import java.util.Properties;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
@@ -147,7 +148,7 @@ public class OracleSource {
             // for all Kafka topic names emanating from this connector. Only alphanumeric characters
             // and
             // underscores should be used.
-            props.setProperty("database.server.name", DATABASE_SERVER_NAME);
+            props.setProperty(TOPIC_PREFIX.name(), DATABASE_SERVER_NAME);
             props.setProperty("database.user", checkNotNull(username));
             props.setProperty("database.password", checkNotNull(password));
 

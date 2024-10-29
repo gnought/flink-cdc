@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.cdc.connectors.base.utils.EnvironmentUtils.checkSupportCheckpointsAfterTasksFinished;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
@@ -73,7 +74,7 @@ public class OracleSourceConfigFactory extends JdbcSourceConfigFactory {
         // for all Kafka topic names emanating from this connector. Only alphanumeric characters
         // and
         // underscores should be used.
-        props.setProperty("database.server.name", DATABASE_SERVER_NAME);
+        props.setProperty(TOPIC_PREFIX.name(), DATABASE_SERVER_NAME);
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
         props.setProperty("database.dbname", checkNotNull(databaseList.get(0)));

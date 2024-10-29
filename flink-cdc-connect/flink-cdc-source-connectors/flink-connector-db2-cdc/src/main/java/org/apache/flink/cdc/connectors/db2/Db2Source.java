@@ -27,6 +27,7 @@ import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /** Source for DB2 CDC connector. */
@@ -62,7 +63,7 @@ public class Db2Source {
             props.setProperty("database.user", checkNotNull(username));
             props.setProperty("database.password", checkNotNull(password));
             props.setProperty("database.dbname", checkNotNull(database));
-            props.setProperty("database.server.name", DB2_DATABASE_SERVER_NAME); // Hard-coded here
+            props.setProperty(TOPIC_PREFIX.name(), DB2_DATABASE_SERVER_NAME); // Hard-coded here
             props.setProperty(
                     SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
 
