@@ -87,7 +87,7 @@ public class MySqlValidator implements Validator {
             return DebeziumUtils.openJdbcConnection(sourceConfig);
         } else {
             // for the legacy source
-            return DebeziumUtils.createMySqlConnection(from(dbzProperties), new Properties());
+            return DebeziumUtils.createMySqlConnection(from(dbzProperties));
         }
     }
 

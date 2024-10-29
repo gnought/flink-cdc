@@ -63,7 +63,6 @@ public class MySqlSourceConfig implements Serializable {
     private final boolean includeSchemaChanges;
     private final boolean scanNewlyAddedTableEnabled;
     private final boolean closeIdleReaders;
-    private final Properties jdbcProperties;
     private final Map<ObjectPath, String> chunkKeyColumns;
     private final boolean skipSnapshotBackfill;
 
@@ -97,7 +96,6 @@ public class MySqlSourceConfig implements Serializable {
             boolean scanNewlyAddedTableEnabled,
             boolean closeIdleReaders,
             Properties dbzProperties,
-            Properties jdbcProperties,
             Map<ObjectPath, String> chunkKeyColumns,
             boolean skipSnapshotBackfill) {
         this.hostname = checkNotNull(hostname);
@@ -124,7 +122,6 @@ public class MySqlSourceConfig implements Serializable {
         this.dbzProperties = checkNotNull(dbzProperties);
         this.dbzConfiguration = Configuration.from(dbzProperties);
         this.dbzMySqlConfig = new MySqlConnectorConfig(dbzConfiguration);
-        this.jdbcProperties = jdbcProperties;
         this.chunkKeyColumns = chunkKeyColumns;
         this.skipSnapshotBackfill = skipSnapshotBackfill;
     }
@@ -241,10 +238,6 @@ public class MySqlSourceConfig implements Serializable {
         return (TableId tableId) ->
                 tableFilters.dataCollectionFilter().isIncluded(tableId)
                         && (excludeTableFilter == null || !excludeTableFilter.isMatch(tableId));
-    }
-
-    public Properties getJdbcProperties() {
-        return jdbcProperties;
     }
 
     public Map<ObjectPath, String> getChunkKeyColumns() {
