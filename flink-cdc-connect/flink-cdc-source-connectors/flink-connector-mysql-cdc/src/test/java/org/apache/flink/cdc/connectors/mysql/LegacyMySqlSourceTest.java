@@ -34,6 +34,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.debezium.DebeziumException;
 import io.debezium.document.Document;
 import io.debezium.document.DocumentWriter;
+import io.debezium.relational.Attribute;
 import io.debezium.relational.Column;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableEditor;
@@ -1190,6 +1191,16 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
         @Override
         public String comment() {
             return "";
+        }
+
+        @Override
+        public List<Attribute> attributes() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Attribute attributeWithName(String s) {
+            throw new UnsupportedOperationException("Not implemented.");
         }
 
         @Override
