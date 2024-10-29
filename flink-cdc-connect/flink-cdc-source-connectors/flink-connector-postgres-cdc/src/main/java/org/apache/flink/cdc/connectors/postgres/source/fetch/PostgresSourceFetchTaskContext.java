@@ -57,6 +57,7 @@ import io.debezium.relational.Column;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
+import io.debezium.relational.history.SchemaHistory;
 import io.debezium.spi.topic.TopicNamingStrategy;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -167,9 +168,7 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         TopicNamingStrategy<TableId> topicNamingStrategy =
                 dbzConfig.getTopicNamingStrategy(PostgresConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
-                sourceConfig
-                        .getDbzConfiguration()
-                        .getString(EmbeddedFlinkDatabaseHistory.DATABASE_HISTORY_INSTANCE_NAME),
+                sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 sourceSplitBase.getTableSchemas().values());
 
         try {

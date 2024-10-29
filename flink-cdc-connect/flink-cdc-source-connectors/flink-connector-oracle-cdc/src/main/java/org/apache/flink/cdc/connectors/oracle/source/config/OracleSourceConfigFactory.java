@@ -22,6 +22,8 @@ import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.oracle.OracleConnector;
+import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.history.SchemaHistory;
 
 import javax.annotation.Nullable;
 
@@ -74,14 +76,15 @@ public class OracleSourceConfigFactory extends JdbcSourceConfigFactory {
         props.setProperty("database.server.name", DATABASE_SERVER_NAME);
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
-        props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
         props.setProperty("database.dbname", checkNotNull(databaseList.get(0)));
-        // database history
+        // database schema history
         props.setProperty(
-                "database.history", EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
-        props.setProperty("database.history.instance.name", UUID.randomUUID() + "_" + subtaskId);
-        props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
-        props.setProperty("database.history.refer.ddl", String.valueOf(true));
+                HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
+                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+        props.setProperty(SchemaHistory.NAME.name(), UUID.randomUUID() + "_" + subtaskId);
+        props.setProperty(
+                SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
+        props.setProperty("schema.history.refer.ddl", String.valueOf(true));
         props.setProperty("connect.timeout.ms", String.valueOf(connectTimeout.toMillis()));
         // disable tombstones
         props.setProperty("tombstones.on.delete", String.valueOf(false));

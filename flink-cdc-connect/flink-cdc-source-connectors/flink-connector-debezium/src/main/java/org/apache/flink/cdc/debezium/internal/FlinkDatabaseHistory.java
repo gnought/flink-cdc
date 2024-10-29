@@ -36,13 +36,11 @@ import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHi
  * Inspired from {@link io.debezium.relational.history.MemorySchemaHistory} but we will store the
  * HistoryRecords in Flink's state for persistence.
  *
- * <p>Note: This is not a clean solution because we depends on a global variable and all the history
+ * <p>Note: This is not a clean solution because we depend on a global variable and all the history
  * records will be stored in state (grow infinitely). We may need to come up with a
  * FileSystemDatabaseHistory in the future to store history in HDFS.
  */
 public class FlinkDatabaseHistory extends AbstractSchemaHistory {
-
-    public static final String DATABASE_HISTORY_INSTANCE_NAME = "database.history.instance.name";
 
     private ConcurrentLinkedQueue<SchemaRecord> schemaRecords;
     private String instanceName;
@@ -60,7 +58,7 @@ public class FlinkDatabaseHistory extends AbstractSchemaHistory {
             SchemaHistoryListener listener,
             boolean useCatalogBeforeSchema) {
         super.configure(config, comparator, listener, useCatalogBeforeSchema);
-        this.instanceName = config.getString(DATABASE_HISTORY_INSTANCE_NAME);
+        this.instanceName = config.getString(NAME);
         this.schemaRecords = getRegisteredHistoryRecord(instanceName);
 
         // register the schema changes into state

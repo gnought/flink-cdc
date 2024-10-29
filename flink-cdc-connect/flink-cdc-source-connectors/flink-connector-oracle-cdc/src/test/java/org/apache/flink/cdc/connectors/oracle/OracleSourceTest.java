@@ -38,6 +38,7 @@ import org.apache.flink.util.Collector;
 import org.apache.flink.util.Preconditions;
 
 import com.jayway.jsonpath.JsonPath;
+import io.debezium.relational.history.SchemaHistory;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -559,7 +560,7 @@ public class OracleSourceTest extends OracleSourceTestBase {
         Properties debeziumProperties = new Properties();
         debeziumProperties.setProperty("debezium.log.mining.strategy", "online_catalog");
         // ignore APEX ORCLCDB system tables changes
-        debeziumProperties.setProperty("database.history.store.only.captured.tables.ddl", "true");
+        debeziumProperties.setProperty(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL.name(), "true");
         return OracleSource.<SourceRecord>builder()
                 .hostname(ORACLE_CONTAINER.getHost())
                 .port(ORACLE_CONTAINER.getOraclePort())
