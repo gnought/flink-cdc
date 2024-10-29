@@ -1,20 +1,8 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright Debezium Authors.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.connector.oracle.logminer;
 
 import io.debezium.DebeziumException;
@@ -59,10 +47,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Copied from Debezium 1.9.8.Final.
+ * Copied from Debezium 2.0.1.Final.
  *
- * <p>Line 356: Replace < condition with <= to be able to catch ongoing transactions during snapshot
+ * <p>Line 342: Replace < condition with <= to be able to catch ongoing transactions during snapshot
  * if current SCN points to START/INSERT/DELETE/UPDATE event.
+ */
+/**
+ * @author Chris Cranford
  */
 public class LogMinerAdapter extends AbstractStreamingAdapter {
 
@@ -148,9 +139,7 @@ public class LogMinerAdapter extends AbstractStreamingAdapter {
         // that prevents switching from a PDB to the root CDB and if invoking the LogMiner APIs on
         // such a connection, the use of commit/rollback by LogMiner will drop/invalidate the save
         // point as well. A separate connection is necessary to preserve the save point.
-        try (OracleConnection conn =
-                new OracleConnection(
-                        connection.config(), () -> getClass().getClassLoader(), false)) {
+        try (OracleConnection conn = new OracleConnection(connection.config(), false)) {
             conn.setAutoCommit(false);
             if (!Strings.isNullOrEmpty(connectorConfig.getPdbName())) {
                 // The next stage cannot be run within the PDB, reset the connection to the CDB.
@@ -197,21 +186,6 @@ public class LogMinerAdapter extends AbstractStreamingAdapter {
 
             try (Statement s = connection.connection().createStatement();
                     ResultSet rs = s.executeQuery(query)) {
-                List<String> results = new ArrayList<>();
-                Statement s2 = connection.connection().createStatement();
-                ResultSet rs2 =
-                        s2.executeQuery(
-                                "SELECT t.START_SCN, t.START_SCNB, t.DEPENDENT_SCN FROM V$TRANSACTION t");
-                while (rs2.next()) {
-                    results.add(
-                            String.join(
-                                    " | ", rs2.getString(1), rs2.getString(2), rs2.getString(3)));
-                }
-                if (!results.isEmpty()) {
-                    LOGGER.info("NOT EMPTY TRSNASSS: {}", results);
-                }
-                rs2.close();
-
                 while (rs.next()) {
                     if (currentScn == null) {
                         // Only need to set this once per iteration
