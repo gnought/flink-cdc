@@ -235,7 +235,10 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                         queue,
                         dbzConfig.getTableFilters().dataCollectionFilter(),
                         DataChangeEvent::new,
+                        null,
                         metadataProvider,
+                        dbzConfig.createHeartbeat(
+                                topicNamingStrategy, schemaNameAdjuster, null, null),
                         schemaNameAdjuster);
 
         ChangeEventSourceMetricsFactory<PostgresPartition> metricsFactory =
