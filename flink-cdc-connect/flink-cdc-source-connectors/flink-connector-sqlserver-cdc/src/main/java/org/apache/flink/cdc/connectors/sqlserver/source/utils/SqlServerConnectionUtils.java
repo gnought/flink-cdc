@@ -48,7 +48,6 @@ public class SqlServerConnectionUtils {
                         connectorConfig.binaryHandlingMode());
         return new SqlServerConnection(
                 JdbcConfiguration.adapt(dbzConnectorConfig),
-                ((SqlServerConnectorConfig) connectorConfig).getSourceTimestampMode(),
                 valueConverters,
                 connectorConfig.getSkippedOperations());
     }
