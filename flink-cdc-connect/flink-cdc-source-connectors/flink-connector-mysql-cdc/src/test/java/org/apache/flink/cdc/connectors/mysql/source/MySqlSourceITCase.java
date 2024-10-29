@@ -1198,7 +1198,7 @@ public class MySqlSourceITCase extends MySqlSourceTestBase {
         properties.put("database.serverTimezone", ZoneId.of("UTC").toString());
         io.debezium.config.Configuration configuration =
                 io.debezium.config.Configuration.from(properties);
-        return DebeziumUtils.createMySqlConnection(configuration, new Properties());
+        return DebeziumUtils.createMySqlConnection(configuration);
     }
 
     private String getTableId() {
