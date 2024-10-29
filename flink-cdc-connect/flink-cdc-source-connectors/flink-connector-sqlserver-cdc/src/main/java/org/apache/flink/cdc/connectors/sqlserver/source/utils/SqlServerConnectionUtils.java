@@ -50,7 +50,6 @@ public class SqlServerConnectionUtils {
                 JdbcConfiguration.adapt(dbzConnectorConfig),
                 ((SqlServerConnectorConfig) connectorConfig).getSourceTimestampMode(),
                 valueConverters,
-                SqlServerConnectionUtils.class::getClassLoader,
                 connectorConfig.getSkippedOperations());
     }
 
