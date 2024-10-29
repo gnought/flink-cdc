@@ -22,6 +22,7 @@ import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 
 import io.debezium.connector.oracle.OracleConnector;
+import io.debezium.relational.history.SchemaHistory;
 
 import javax.annotation.Nullable;
 
@@ -159,7 +160,8 @@ public class OracleSource {
             if (port != null) {
                 props.setProperty("database.port", String.valueOf(port));
             }
-            props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
+            props.setProperty(
+                    SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
             props.setProperty("database.dbname", checkNotNull(database));
             if (schemaList != null) {
                 props.setProperty("schema.include.list", String.join(",", schemaList));

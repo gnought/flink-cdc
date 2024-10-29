@@ -55,6 +55,8 @@ import io.debezium.embedded.Connect;
 import io.debezium.engine.DebeziumEngine;
 import io.debezium.engine.spi.OffsetCommitPolicy;
 import io.debezium.heartbeat.Heartbeat;
+import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.history.SchemaHistory;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,7 +289,8 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
                 this.engineInstanceName = record;
                 firstEntry = false;
             } else {
-                // Put the records into the state. The database history should read, reorganize and
+                // Put the records into the state. The database schema history should read,
+                // reorganize and
                 // register the state.
                 historyRecords.add(new SchemaRecord(reader.read(record)));
                 recordsCount++;
@@ -385,15 +388,16 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
             // not restore from recovery
             engineInstanceName = UUID.randomUUID().toString();
         }
-        // history instance name to initialize FlinkDatabaseHistory
-        properties.setProperty(
-                FlinkDatabaseHistory.DATABASE_HISTORY_INSTANCE_NAME, engineInstanceName);
+        // schema history instance name to initialize FlinkDatabaseHistory
+        properties.setProperty(SchemaHistory.NAME.name(), engineInstanceName);
         // we have to use a persisted DatabaseHistory implementation, otherwise, recovery can't
         // continue to read binlog
         // see
         // https://stackoverflow.com/questions/57147584/debezium-error-schema-isnt-know-to-this-connector
         // and https://debezium.io/blog/2018/03/16/note-on-database-history-topic-configuration/
-        properties.setProperty("database.history", determineDatabase().getCanonicalName());
+        properties.setProperty(
+                HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
+                determineDatabase().getCanonicalName());
 
         // we have to filter out the heartbeat events, otherwise the deserializer will fail
         String dbzHeartbeatPrefix =

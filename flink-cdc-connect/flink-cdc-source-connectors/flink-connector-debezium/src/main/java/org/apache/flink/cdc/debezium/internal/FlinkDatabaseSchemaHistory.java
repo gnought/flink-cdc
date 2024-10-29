@@ -54,8 +54,6 @@ import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHi
  */
 public class FlinkDatabaseSchemaHistory implements SchemaHistory {
 
-    public static final String DATABASE_HISTORY_INSTANCE_NAME = "database.history.instance.name";
-
     private final FlinkJsonTableChangeSerializer tableChangesSerializer =
             new FlinkJsonTableChangeSerializer();
 
@@ -72,7 +70,7 @@ public class FlinkDatabaseSchemaHistory implements SchemaHistory {
             HistoryRecordComparator comparator,
             SchemaHistoryListener listener,
             boolean useCatalogBeforeSchema) {
-        this.instanceName = config.getString(DATABASE_HISTORY_INSTANCE_NAME);
+        this.instanceName = config.getString(NAME);
         this.listener = listener;
         this.storeOnlyMonitoredTablesDdl = config.getBoolean(STORE_ONLY_CAPTURED_TABLES_DDL);
         this.skipUnparseableDDL = config.getBoolean(SKIP_UNPARSEABLE_DDL_STATEMENTS);
