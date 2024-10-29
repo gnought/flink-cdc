@@ -22,6 +22,8 @@ import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.postgresql.PostgresConnector;
+import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.history.SchemaHistory;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -74,12 +76,14 @@ public class PostgresSourceConfigFactory extends JdbcSourceConfigFactory {
         // execution, the original slot name will be used by enumerator to create slot for
         // global stream split
         props.setProperty("slot.name", checkNotNull(slotName));
-        // database history
+        // database schema history
         props.setProperty(
-                "database.history", EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
-        props.setProperty("database.history.instance.name", UUID.randomUUID() + "_" + subtaskId);
-        props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
-        props.setProperty("database.history.refer.ddl", String.valueOf(true));
+                HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
+                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+        props.setProperty(SchemaHistory.NAME.name(), UUID.randomUUID() + "_" + subtaskId);
+        props.setProperty(
+                SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
+        props.setProperty("schema.history.refer.ddl", String.valueOf(true));
         // we have to enable heartbeat for PG to make sure DebeziumChangeConsumer#handleBatch
         // is invoked after job restart
         // Enable TCP keep-alive probe to verify that the database connection is still alive

@@ -22,6 +22,7 @@ import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 
 import io.debezium.connector.sqlserver.SqlServerConnector;
+import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
 
@@ -129,7 +130,8 @@ public class SqlServerSource {
             props.setProperty("database.user", checkNotNull(username));
             props.setProperty("database.password", checkNotNull(password));
             props.setProperty("database.port", String.valueOf(port));
-            props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
+            props.setProperty(
+                    SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL.name(), String.valueOf(true));
             props.setProperty("database.dbname", checkNotNull(database));
 
             if (tableList != null) {

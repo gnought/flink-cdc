@@ -22,6 +22,8 @@ import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.db2.Db2Connector;
+import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -41,10 +43,13 @@ public class Db2SourceConfigFactory extends JdbcSourceConfigFactory {
         Properties props = new Properties();
         props.setProperty("connector.class", Db2Connector.class.getCanonicalName());
 
-        // set database history impl to flink database history
+        // set database schema history impl to flink database schema history
         props.setProperty(
-                "database.history", EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
-        props.setProperty("database.history.instance.name", UUID.randomUUID() + "_" + subtask);
+                HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
+                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+        props.setProperty(SchemaHistory.NAME.name(), UUID.randomUUID() + "_" + subtask);
+        props.setProperty(
+                SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
 
         // hard code server name, because we don't need to distinguish it, docs:
         // Logical name that identifies and provides a namespace for the SQL Server database
@@ -57,7 +62,6 @@ public class Db2SourceConfigFactory extends JdbcSourceConfigFactory {
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
         props.setProperty("database.port", String.valueOf(port));
-        props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
         props.setProperty("database.dbname", checkNotNull(databaseList.get(0)));
 
         if (tableList != null) {

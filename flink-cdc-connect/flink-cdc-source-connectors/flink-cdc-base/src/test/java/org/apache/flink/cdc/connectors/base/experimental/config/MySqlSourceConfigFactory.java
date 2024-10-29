@@ -22,6 +22,8 @@ import org.apache.flink.cdc.connectors.base.experimental.EmbeddedFlinkDatabaseHi
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
+import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -66,12 +68,14 @@ public class MySqlSourceConfigFactory extends JdbcSourceConfigFactory {
         props.setProperty("database.fetchSize", String.valueOf(fetchSize));
         props.setProperty("database.responseBuffering", "adaptive");
         props.setProperty("database.connectionTimeZone", serverTimeZone);
-        // database history
+        // schema history
         props.setProperty(
-                "database.history", EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
-        props.setProperty("database.history.instance.name", UUID.randomUUID() + "_" + subtaskId);
-        props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
-        props.setProperty("database.history.refer.ddl", String.valueOf(true));
+                HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
+                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+        props.setProperty(SchemaHistory.NAME.name(), UUID.randomUUID() + "_" + subtaskId);
+        props.setProperty(
+                SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
+        props.setProperty("schema.history.refer.ddl", String.valueOf(true));
         props.setProperty("connect.timeout.ms", String.valueOf(connectTimeout.toMillis()));
         // the underlying debezium reader should always capture the schema changes and forward them.
         // Note: the includeSchemaChanges parameter is used to control emitting the schema record,

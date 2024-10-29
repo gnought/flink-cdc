@@ -47,6 +47,7 @@ import io.debezium.pipeline.source.spi.EventMetadataProvider;
 import io.debezium.pipeline.spi.OffsetContext;
 import io.debezium.pipeline.spi.Offsets;
 import io.debezium.relational.TableId;
+import io.debezium.relational.history.SchemaHistory;
 import io.debezium.spi.schema.DataCollectionId;
 import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Clock;
@@ -114,9 +115,7 @@ public class StatefulTaskContext {
         this.topicNamingSelector =
                 connectorConfig.getTopicNamingStrategy(MySqlConnectorConfig.TOPIC_NAMING_STRATEGY);
         EmbeddedFlinkDatabaseHistory.registerHistory(
-                sourceConfig
-                        .getDbzConfiguration()
-                        .getString(EmbeddedFlinkDatabaseHistory.DATABASE_HISTORY_INSTANCE_NAME),
+                sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 mySqlSplit.getTableSchemas().values());
 
         Optional.ofNullable(databaseSchema).ifPresent(MySqlDatabaseSchema::close);

@@ -47,8 +47,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
 
-    public static final String DATABASE_HISTORY_INSTANCE_NAME = "database.history.instance.name";
-
     public static final ConcurrentMap<String, Collection<TableChange>> TABLE_SCHEMAS =
             new ConcurrentHashMap<>();
 
@@ -68,7 +66,7 @@ public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
         this.skipUnparseableDDL = config.getBoolean(SKIP_UNPARSEABLE_DDL_STATEMENTS);
 
         // recover
-        String instanceName = config.getString(DATABASE_HISTORY_INSTANCE_NAME);
+        String instanceName = config.getString(NAME);
         this.tableSchemas = new HashMap<>();
         for (TableChange tableChange : removeHistory(instanceName)) {
             tableSchemas.put(tableChange.getId(), tableChange);

@@ -23,6 +23,7 @@ import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.cdc.debezium.internal.DebeziumOffset;
 
 import io.debezium.connector.mysql.MySqlConnector;
+import io.debezium.relational.history.SchemaHistory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -170,7 +171,8 @@ public class MySqlSource {
             props.setProperty("database.user", checkNotNull(username));
             props.setProperty("database.password", checkNotNull(password));
             props.setProperty("database.port", String.valueOf(port));
-            props.setProperty("database.history.skip.unparseable.ddl", String.valueOf(true));
+            props.setProperty(
+                    SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
             // debezium use "long" mode to handle unsigned bigint by default,
             // but it'll cause lose of precise when the value is larger than 2^63,
             // so use "precise" mode to avoid it.
