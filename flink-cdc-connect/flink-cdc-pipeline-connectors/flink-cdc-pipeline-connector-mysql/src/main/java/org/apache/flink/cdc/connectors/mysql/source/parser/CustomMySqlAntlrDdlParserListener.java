@@ -50,10 +50,14 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Copied from {@link MySqlAntlrDdlParserListener} in Debezium 1.9.8.final.
+ * Parser listener for MySQL column definition queries. Its purpose is to delegate events to defined
+ * collection of concrete parser listeners. Each listener handles the specified type of DDL
+ * statement.
  *
- * <p>This listener's constructor will use some modified listener.
+ * <p>This listener is catching all occurred parsing exceptions and implements a skipping logic for
+ * BEGIN ... END statements. No event will be delegated during skipping phase.
  */
+/** Copied from {@link MySqlAntlrDdlParserListener} in Debezium 2.0.1.final. */
 public class CustomMySqlAntlrDdlParserListener extends MySqlParserBaseListener
         implements AntlrDdlParserListener {
 
