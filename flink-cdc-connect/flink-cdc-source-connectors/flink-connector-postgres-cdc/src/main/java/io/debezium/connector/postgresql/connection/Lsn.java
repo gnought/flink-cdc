@@ -3,7 +3,6 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.connector.postgresql.connection;
 
 import org.postgresql.replication.LogSequenceNumber;
@@ -11,13 +10,15 @@ import org.postgresql.replication.LogSequenceNumber;
 import java.nio.ByteBuffer;
 
 /**
- * Copied from Debezium 1.9.8.final without changes due to the NoSuchMethodError, caused by the fact
- * that current Debezium release java version is 11, so we need to compile this file by java 8
- * compiler. <a
- * href="https://www.morling.dev/blog/bytebuffer-and-the-dreaded-nosuchmethoderror/">More info</a>.
- * Abstraction of PostgreSQL log sequence number, adapted from {@link LogSequenceNumber}.
+ * Abstraction of PostgreSQL log sequence number, adapted from {@link
+ * org.postgresql.replication.LogSequenceNumber}.
  *
- * <p>Line 32: add NO_STOPPING_LSN
+ * @author Jiri Pechanec
+ */
+/**
+ * Copied from Debezium 2.0.1.Final
+ *
+ * <p>Line 32, 143~145: add NO_STOPPING_LSN
  */
 public class Lsn implements Comparable<Lsn> {
 
@@ -85,7 +86,7 @@ public class Lsn implements Comparable<Lsn> {
         final ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putInt(logicalXlog);
         buf.putInt(segment);
-        ((java.nio.Buffer) buf).position(0);
+        buf.position(0);
         final long value = buf.getLong();
 
         return Lsn.valueOf(value);
@@ -109,7 +110,7 @@ public class Lsn implements Comparable<Lsn> {
     public String asString() {
         final ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong(value);
-        ((java.nio.Buffer) buf).position(0);
+        buf.position(0);
 
         final int logicalXlog = buf.getInt();
         final int segment = buf.getInt();

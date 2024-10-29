@@ -12,7 +12,6 @@ import io.debezium.annotation.VisibleForTesting;
 import io.debezium.config.Configuration;
 import io.debezium.connector.postgresql.PgOid;
 import io.debezium.connector.postgresql.PostgresConnectorConfig;
-import io.debezium.connector.postgresql.PostgresSchema;
 import io.debezium.connector.postgresql.PostgresType;
 import io.debezium.connector.postgresql.PostgresValueConverter;
 import io.debezium.connector.postgresql.TypeRegistry;
@@ -25,7 +24,6 @@ import io.debezium.relational.ColumnEditor;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
-import io.debezium.schema.DatabaseSchema;
 import io.debezium.util.Clock;
 import io.debezium.util.Metronome;
 import org.apache.kafka.connect.errors.ConnectException;
@@ -48,7 +46,6 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
@@ -56,17 +53,17 @@ import java.util.regex.Pattern;
  * {@link JdbcConnection} connection extension used for connecting to Postgres instances.
  *
  * @author Horia Chiorean
- *     <p>Copied from Debezium 1.9.8-Final with three additional methods:
- *     <ul>
- *       <li>Constructor PostgresConnection( Configuration config, PostgresValueConverterBuilder
- *           valueConverterBuilder, ConnectionFactory factory) to allow passing a custom
- *           ConnectionFactory
- *       <li>override connection() to return a unwrapped PgConnection (otherwise, it will complain
- *           about HikariProxyConnection cannot be cast to class org.postgresql.core.BaseConnection)
- *       <li>override isTableUniqueIndexIncluded: Copied DBZ-5398 from Debezium 2.0.0.Final to fix
- *           https://github.com/ververica/flink-cdc-connectors/issues/2710. Remove this comment
- *           after bumping debezium version to 2.0.0.Final.
- *     </ul>
+ */
+/**
+ * Copied from Debezium 2.0.1-Final with two additional methods:
+ *
+ * <ul>
+ *   <li>Constructor PostgresConnection( Configuration config, PostgresValueConverterBuilder
+ *       valueConverterBuilder, ConnectionFactory factory) to allow passing a custom
+ *       ConnectionFactory
+ *   <li>override connection() to return a unwrapped PgConnection (otherwise, it will complain about
+ *       HikariProxyConnection cannot be cast to class org.postgresql.core.BaseConnection)
+ * </ul>
  */
 public class PostgresConnection extends JdbcConnection {
 
@@ -149,7 +146,6 @@ public class PostgresConnection extends JdbcConnection {
                 addDefaultSettings(config, connectionUsage),
                 factory,
                 PostgresConnection::validateServerVersion,
-                null,
                 "\"",
                 "\"");
 
@@ -162,7 +158,8 @@ public class PostgresConnection extends JdbcConnection {
             final PostgresValueConverter valueConverter =
                     valueConverterBuilder.build(this.typeRegistry);
             this.defaultValueConverter =
-                    new PostgresDefaultValueConverter(valueConverter, this.getTimestampUtils());
+                    new PostgresDefaultValueConverter(
+                            valueConverter, this.getTimestampUtils(), typeRegistry);
         }
     }
 
@@ -179,7 +176,6 @@ public class PostgresConnection extends JdbcConnection {
                 addDefaultSettings(config.getJdbcConfig(), connectionUsage),
                 FACTORY,
                 PostgresConnection::validateServerVersion,
-                null,
                 "\"",
                 "\"");
         if (Objects.isNull(typeRegistry)) {
@@ -190,7 +186,8 @@ public class PostgresConnection extends JdbcConnection {
             final PostgresValueConverter valueConverter =
                     PostgresValueConverter.of(config, this.getDatabaseCharset(), typeRegistry);
             this.defaultValueConverter =
-                    new PostgresDefaultValueConverter(valueConverter, this.getTimestampUtils());
+                    new PostgresDefaultValueConverter(
+                            valueConverter, this.getTimestampUtils(), typeRegistry);
         }
     }
 
@@ -550,7 +547,7 @@ public class PostgresConnection extends JdbcConnection {
     public Long currentTransactionId() throws SQLException {
         AtomicLong txId = new AtomicLong(0);
         query(
-                "select (case pg_is_in_recovery() when 't' then 0 else txid_current() end) AS pg_current_txid",
+                "select * from txid_current()",
                 rs -> {
                     if (rs.next()) {
                         txId.compareAndSet(0, rs.getLong(1));
@@ -571,7 +568,7 @@ public class PostgresConnection extends JdbcConnection {
         int majorVersion = connection().getMetaData().getDatabaseMajorVersion();
         query(
                 majorVersion >= 10
-                        ? "select (case pg_is_in_recovery() when 't' then pg_last_wal_receive_lsn() else pg_current_wal_lsn() end) AS pg_current_wal_lsn"
+                        ? "select * from pg_current_wal_lsn()"
                         : "select * from pg_current_xlog_location()",
                 rs -> {
                     if (!rs.next()) {
@@ -761,14 +758,12 @@ public class PostgresConnection extends JdbcConnection {
     }
 
     @Override
-    public <T extends DatabaseSchema<TableId>> Object getColumnValue(
-            ResultSet rs, int columnIndex, Column column, Table table, T schema)
+    public Object getColumnValue(ResultSet rs, int columnIndex, Column column, Table table)
             throws SQLException {
         try {
             final ResultSetMetaData metaData = rs.getMetaData();
             final String columnTypeName = metaData.getColumnTypeName(columnIndex);
-            final PostgresType type =
-                    ((PostgresSchema) schema).getTypeRegistry().get(columnTypeName);
+            final PostgresType type = getTypeRegistry().get(columnTypeName);
 
             LOGGER.trace("Type of incoming data is: {}", type.getOid());
             LOGGER.trace("ColumnTypeName is: {}", columnTypeName);
@@ -806,8 +801,7 @@ public class PostgresConnection extends JdbcConnection {
                             ? value.get()
                             : new SpecialValueDecimal(rs.getBigDecimal(columnIndex));
                 case PgOid.TIME:
-                    // To handle time 24:00:00 supported by TIME columns, read the column as a
-                    // string.
+                // To handle time 24:00:00 supported by TIME columns, read the column as a string.
                 case PgOid.TIMETZ:
                     // In order to guarantee that we resolve TIMETZ columns with proper microsecond
                     // precision,
@@ -825,7 +819,7 @@ public class PostgresConnection extends JdbcConnection {
             }
         } catch (SQLException e) {
             // not a known type
-            return super.getColumnValue(rs, columnIndex, column, table, schema);
+            return super.getColumnValue(rs, columnIndex, column, table);
         }
     }
 
@@ -846,17 +840,6 @@ public class PostgresConnection extends JdbcConnection {
                     && !EXPRESSION_DEFAULT_PATTERN.matcher(columnName).matches();
         }
         return false;
-    }
-
-    /**
-     * Retrieves all {@code TableId}s in a given database catalog, including partitioned tables.
-     *
-     * @param catalogName the catalog/database name
-     * @return set of all table ids for existing table objects
-     * @throws SQLException if a database exception occurred
-     */
-    public Set<TableId> getAllTableIds(String catalogName) throws SQLException {
-        return readTableNames(catalogName, null, null, new String[] {"TABLE", "PARTITIONED TABLE"});
     }
 
     @FunctionalInterface
