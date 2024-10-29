@@ -131,18 +131,7 @@ public class PostgresScanFetchTask extends AbstractScanFetchTask {
                         loader, backfillStreamSplit.getStartingOffset());
 
         final PostgresStreamFetchTask.StreamSplitReadTask backfillReadTask =
-                new PostgresStreamFetchTask.StreamSplitReadTask(
-                        ctx.getDbzConnectorConfig(),
-                        ctx.getSnapShotter(),
-                        ctx.getConnection(),
-                        ctx.getDispatcher(),
-                        ctx.getPostgresDispatcher(),
-                        ctx.getErrorHandler(),
-                        ctx.getTaskContext().getClock(),
-                        ctx.getDatabaseSchema(),
-                        ctx.getTaskContext(),
-                        ctx.getReplicationConnection(),
-                        backfillStreamSplit);
+                new PostgresStreamFetchTask.StreamSplitReadTask(ctx, backfillStreamSplit);
         LOG.info(
                 "Execute backfillReadTask for split {} with slot name {}",
                 snapshotSplit,
