@@ -58,7 +58,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * BEGIN ... END statements. No event will be delegated during skipping phase.
  */
 /**
- * Copied from {@link MySqlAntlrDdlParserListener} in Debezium 2.0.0.Alpha1.
+ * Copied from {@link MySqlAntlrDdlParserListener} in Debezium 2.0.1.Final.
  *
  * <p>use CustomAlterTableParserListener
  */

@@ -3,13 +3,13 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.connector.db2;
 
 import io.debezium.pipeline.ErrorHandler;
 import io.debezium.pipeline.EventDispatcher;
 import io.debezium.pipeline.source.spi.ChangeTableResultSet;
 import io.debezium.pipeline.source.spi.StreamingChangeEventSource;
+import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.schema.DatabaseSchema;
 import io.debezium.schema.SchemaChangeEvent.SchemaChangeEventType;
@@ -35,10 +35,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Copied from Debezium project(1.9.8.final)
- *
- * <p>A {@link StreamingChangeEventSource} based on DB2 change data capture functionality. A main
- * loop polls database DDL change and change data tables and turns them into change events.
+ * A {@link StreamingChangeEventSource} based on DB2 change data capture functionality. A main loop
+ * polls database DDL change and change data tables and turns them into change events.
  *
  * <p>The connector uses CDC functionality of DB2 that is implemented as as a process that monitors
  * source table and write changes from the table into the change table.
@@ -56,6 +54,10 @@ import java.util.stream.Collectors;
  * change table is switched and streaming is executed from the new one.
  *
  * @author Jiri Pechanec, Peter Urbanetz
+ */
+/**
+ * Copied from Debezium 2.0.1.Final to add method {@link
+ * Db2StreamingChangeEventSource#afterHandleLsn(Db2Partition, Lsn)}.
  */
 public class Db2StreamingChangeEventSource
         implements StreamingChangeEventSource<Db2Partition, Db2OffsetContext> {
@@ -169,7 +171,7 @@ public class Db2StreamingChangeEventSource
                     final Db2ChangeTable[] tables = getCdcTablesToQuery(partition, offsetContext);
                     tablesSlot.set(tables);
                     for (Db2ChangeTable table : tables) {
-                        if (table.getStartLsn().isBetween(fromLsn, currentMaxLsn)) {
+                        if (table.getStartLsn().isBetween(fromLsn, currentMaxLsn.increment())) {
                             LOGGER.info("Schema will be changed for {}", table);
                             schemaChangeCheckpoints.add(table);
                         }
@@ -363,6 +365,8 @@ public class Db2StreamingChangeEventSource
             throws InterruptedException, SQLException {
         final Db2ChangeTable newTable = schemaChangeCheckpoints.poll();
         LOGGER.info("Migrating schema to {}", newTable);
+        Table tableSchema = metadataConnection.getTableSchemaFromTable(newTable);
+        offsetContext.event(newTable.getSourceTableId(), Instant.now());
         dispatcher.dispatchSchemaChangeEvent(
                 partition,
                 newTable.getSourceTableId(),
@@ -370,8 +374,10 @@ public class Db2StreamingChangeEventSource
                         partition,
                         offsetContext,
                         newTable,
-                        metadataConnection.getTableSchemaFromTable(newTable),
+                        tableSchema,
                         SchemaChangeEventType.ALTER));
+
+        newTable.setSourceTable(tableSchema);
     }
 
     private Db2ChangeTable[] processErrorFromChangeTableQuery(
