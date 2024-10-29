@@ -17,26 +17,24 @@
 
 package org.apache.flink.cdc.connectors.mysql.source.connection;
 
+import org.apache.flink.cdc.connectors.mysql.debezium.DebeziumUtils;
 import org.apache.flink.cdc.connectors.mysql.source.config.MySqlSourceConfig;
 import org.apache.flink.util.FlinkRuntimeException;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import io.debezium.connector.mysql.MySqlConnection;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 
 import java.sql.DriverManager;
-import java.util.Properties;
 
 /** A connection pool factory to create pooled DataSource {@link HikariDataSource}. */
 public class PooledDataSourceFactory {
 
-    public static final String JDBC_URL_PATTERN =
-            "jdbc:mysql://%s:%s/?useInformationSchema=true&nullCatalogMeansCurrent=false&useUnicode=true";
     public static final String CONNECTION_POOL_PREFIX = "connection-pool-";
     public static final String SERVER_TIMEZONE_KEY = "serverTimezone";
     public static final int MINIMUM_POOL_SIZE = 1;
-    private static final Properties DEFAULT_JDBC_PROPERTIES = initializeDefaultJdbcProperties();
 
     private PooledDataSourceFactory() {}
 
@@ -45,10 +43,11 @@ public class PooledDataSourceFactory {
 
         String hostName = sourceConfig.getHostname();
         int port = sourceConfig.getPort();
-        Properties jdbcProperties = sourceConfig.getJdbcProperties();
-
         config.setPoolName(CONNECTION_POOL_PREFIX + hostName + ":" + port);
-        config.setJdbcUrl(formatJdbcUrl(hostName, port, jdbcProperties));
+
+        MySqlConnection conn = DebeziumUtils.createMySqlConnection(sourceConfig);
+        config.setJdbcUrl(conn.connectionString());
+
         config.setUsername(sourceConfig.getUsername());
         config.setPassword(sourceConfig.getPassword());
         config.setMinimumIdle(MINIMUM_POOL_SIZE);
@@ -56,8 +55,7 @@ public class PooledDataSourceFactory {
         config.setConnectionTimeout(sourceConfig.getConnectTimeout().toMillis());
         config.addDataSourceProperty(SERVER_TIMEZONE_KEY, sourceConfig.getServerTimeZone());
         DriverManager.getDrivers();
-        config.setDriverClassName(
-                sourceConfig.getDbzConfiguration().getString(MySqlConnectorConfig.JDBC_DRIVER));
+        config.setDriverClassName(conn.config().getString(MySqlConnectorConfig.JDBC_DRIVER));
 
         // optional optimization configurations for pooled DataSource
         config.addDataSourceProperty("cachePrepStmts", "true");
@@ -73,29 +71,5 @@ public class PooledDataSourceFactory {
                             + " Please check your jdbc configurations and network.",
                     e);
         }
-    }
-
-    private static String formatJdbcUrl(String hostName, int port, Properties jdbcProperties) {
-        Properties combinedProperties = new Properties();
-        combinedProperties.putAll(DEFAULT_JDBC_PROPERTIES);
-        combinedProperties.putAll(jdbcProperties);
-
-        StringBuilder jdbcUrlStringBuilder =
-                new StringBuilder(String.format(JDBC_URL_PATTERN, hostName, port));
-
-        combinedProperties.forEach(
-                (key, value) -> {
-                    jdbcUrlStringBuilder.append("&").append(key).append("=").append(value);
-                });
-
-        return jdbcUrlStringBuilder.toString();
-    }
-
-    private static Properties initializeDefaultJdbcProperties() {
-        Properties defaultJdbcProperties = new Properties();
-        defaultJdbcProperties.setProperty("zeroDateTimeBehavior", "CONVERT_TO_NULL");
-        defaultJdbcProperties.setProperty("characterEncoding", "UTF-8");
-        defaultJdbcProperties.setProperty("characterSetResults", "UTF-8");
-        return defaultJdbcProperties;
     }
 }
