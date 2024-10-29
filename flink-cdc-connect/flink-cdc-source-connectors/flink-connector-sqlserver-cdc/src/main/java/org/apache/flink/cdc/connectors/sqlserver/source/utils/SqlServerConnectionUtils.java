@@ -19,7 +19,6 @@ package org.apache.flink.cdc.connectors.sqlserver.source.utils;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.sqlserver.SqlServerConnection;
-import io.debezium.connector.sqlserver.SqlServerConnectorConfig;
 import io.debezium.connector.sqlserver.SqlServerValueConverters;
 import io.debezium.jdbc.JdbcConfiguration;
 import io.debezium.jdbc.JdbcConnection;
@@ -49,7 +48,8 @@ public class SqlServerConnectionUtils {
         return new SqlServerConnection(
                 JdbcConfiguration.adapt(dbzConnectorConfig),
                 valueConverters,
-                connectorConfig.getSkippedOperations());
+                connectorConfig.getSkippedOperations(),
+                true);
     }
 
     public static List<TableId> listTables(
