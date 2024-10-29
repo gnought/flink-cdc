@@ -28,6 +28,7 @@ import io.debezium.relational.history.SchemaHistory;
 import java.util.Properties;
 import java.util.UUID;
 
+import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
 import static org.apache.flink.cdc.connectors.base.utils.EnvironmentUtils.checkSupportCheckpointsAfterTasksFinished;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
@@ -57,7 +58,7 @@ public class Db2SourceConfigFactory extends JdbcSourceConfigFactory {
         // all other connectors, since it is used as a prefix for all Kafka topic names
         // emanating from this connector. Only alphanumeric characters and underscores should be
         // used.
-        props.setProperty("database.server.name", DATABASE_SERVER_NAME);
+        props.setProperty(TOPIC_PREFIX.name(), DATABASE_SERVER_NAME);
         props.setProperty("database.hostname", checkNotNull(hostname));
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
