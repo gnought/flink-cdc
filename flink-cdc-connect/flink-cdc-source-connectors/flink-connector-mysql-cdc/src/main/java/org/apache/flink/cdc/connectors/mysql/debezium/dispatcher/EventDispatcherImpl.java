@@ -202,7 +202,8 @@ public class EventDispatcherImpl<T extends DataCollectionId>
                             event.getDatabase(),
                             null,
                             event.getDdl(),
-                            event.getTableChanges());
+                            event.getTableChanges(),
+                            event.getTimestamp());
             String historyStr = DOCUMENT_WRITER.write(historyRecord.document());
 
             Struct value = new Struct(schemaChangeValueSchema);

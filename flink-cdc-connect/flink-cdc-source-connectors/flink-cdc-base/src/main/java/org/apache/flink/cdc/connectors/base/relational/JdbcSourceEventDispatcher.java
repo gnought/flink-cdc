@@ -198,7 +198,8 @@ public class JdbcSourceEventDispatcher<P extends Partition> extends EventDispatc
                             event.getDatabase(),
                             event.getSchema(),
                             event.getDdl(),
-                            event.getTableChanges());
+                            event.getTableChanges(),
+                            event.getTimestamp());
             String historyStr = DOCUMENT_WRITER.write(historyRecord.document());
 
             Struct value = new Struct(schemaChangeValueSchema);
