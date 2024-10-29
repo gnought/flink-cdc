@@ -360,10 +360,6 @@ public class MySqlSourceConfigFactory implements Serializable {
             props.putAll(dbzProperties);
         }
 
-        if (jdbcProperties == null) {
-            jdbcProperties = new Properties();
-        }
-
         return new MySqlSourceConfig(
                 hostname,
                 port,
@@ -387,7 +383,6 @@ public class MySqlSourceConfigFactory implements Serializable {
                 scanNewlyAddedTableEnabled,
                 closeIdleReaders,
                 props,
-                jdbcProperties,
                 chunkKeyColumns,
                 skipSnapshotBackfill);
     }

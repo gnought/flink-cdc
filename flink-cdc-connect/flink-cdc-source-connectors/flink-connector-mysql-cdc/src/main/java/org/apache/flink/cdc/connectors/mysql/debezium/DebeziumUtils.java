@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Predicate;
 
@@ -80,15 +79,13 @@ public class DebeziumUtils {
 
     /** Creates a new {@link MySqlConnection}, but not open the connection. */
     public static MySqlConnection createMySqlConnection(MySqlSourceConfig sourceConfig) {
-        return createMySqlConnection(
-                sourceConfig.getDbzConfiguration(), sourceConfig.getJdbcProperties());
+        return createMySqlConnection(sourceConfig.getDbzConfiguration());
     }
 
     /** Creates a new {@link MySqlConnection}, but not open the connection. */
-    public static MySqlConnection createMySqlConnection(
-            Configuration dbzConfiguration, Properties jdbcProperties) {
+    public static MySqlConnection createMySqlConnection(Configuration dbzConfiguration) {
         return new MySqlConnection(
-                new MySqlConnection.MySqlConnectionConfiguration(dbzConfiguration, jdbcProperties));
+                new MySqlConnection.MySqlConnectionConfiguration(dbzConfiguration));
     }
 
     /** Creates a new {@link BinaryLogClient} for consuming mysql binlog. */

@@ -69,7 +69,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -452,7 +451,7 @@ public class SpecificStartingOffsetITCase {
         properties.put("database.password", customDatabase.getPassword());
         io.debezium.config.Configuration configuration =
                 io.debezium.config.Configuration.from(properties);
-        return DebeziumUtils.createMySqlConnection(configuration, new Properties());
+        return DebeziumUtils.createMySqlConnection(configuration);
     }
 
     private MySqlSourceConfig getMySqlSourceConfig(Long timestamp, String serverId) {
