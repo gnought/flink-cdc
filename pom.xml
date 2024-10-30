@@ -59,7 +59,7 @@ limitations under the License.
 
     <properties>
         <revision>3.3-SNAPSHOT</revision>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <scala.binary.version>2.12</scala.binary.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -72,7 +72,7 @@ limitations under the License.
         <flink.version>1.18.1</flink.version>
         <flink.major.version>1.18</flink.major.version>
         <flink.shaded.version>17.0</flink.shaded.version>
-        <debezium.version>1.9.8.Final</debezium.version>
+        <debezium.version>2.0.1.Final</debezium.version>
         <tikv.version>3.2.0</tikv.version>
         <geometry.version>2.2.0</geometry.version>
         <testcontainers.version>1.18.3</testcontainers.version>
@@ -88,7 +88,14 @@ limitations under the License.
         <junit4.version>4.13.2</junit4.version>
         <assertj.version>3.24.2</assertj.version>
         <markBundledAsOptional>true</markBundledAsOptional>
-        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+        <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-javadoc-plugin.version>3.10.1</maven-javadoc-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <puppycrawl-checkstyle.version>10.20.0</puppycrawl-checkstyle.version>
         <calcite.version>1.32.0</calcite.version>
         <!-- Calcite 1.32.0 depends on 3.1.8,
         at the same time minimum 3.1.x Janino version passing Flink tests without WAs is 3.1.10,
@@ -96,6 +103,7 @@ limitations under the License.
         <janino.version>3.1.10</janino.version>
         <!-- This is for Scala UDF testing purposes only. -->
         <scala.version>2.12.16</scala.version>
+        <apache-source-release-assembly-descriptor.version>1.7</apache-source-release-assembly-descriptor.version>
     </properties>
 
     <dependencyManagement>
@@ -491,12 +499,12 @@ limitations under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
+                <version>${maven-checkstyle-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.14</version>
+                        <version>${puppycrawl-checkstyle.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -520,7 +528,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -568,6 +576,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>shade-flink</id>
@@ -611,7 +620,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-enforcer-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>dependency-convergence</id>
@@ -632,7 +641,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <quiet>true</quiet>
                     <detectOfflineLinks>false</detectOfflineLinks>
@@ -739,7 +748,7 @@ limitations under the License.
                             <dependency>
                                 <groupId>org.apache.apache.resources</groupId>
                                 <artifactId>apache-source-release-assembly-descriptor</artifactId>
-                                <version>1.0.6</version>
+                                <version>${apache-source-release-assembly-descriptor}</version>
                             </dependency>
                         </dependencies>
                         <executions>

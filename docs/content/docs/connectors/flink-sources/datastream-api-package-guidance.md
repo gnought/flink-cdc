@@ -43,10 +43,8 @@ This guide provides a simple `pom.xml` example for packaging DataStream job JARs
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <scala.binary.version>2.12</scala.binary.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -56,10 +54,10 @@ This guide provides a simple `pom.xml` example for packaging DataStream job JARs
         <flink.reuseForks>true</flink.reuseForks>
 
         <!-- dependencies versions -->
-        <flink.version>1.17.2</flink.version>
+        <flink.version>1.18.1</flink.version>
         <slf4j.version>1.7.15</slf4j.version>
         <log4j.version>2.17.1</log4j.version>
-        <debezium.version>1.9.7.Final</debezium.version>
+        <debezium.version>2.0.1.Final</debezium.version>
     </properties>
     <dependencies>
         <dependency>
