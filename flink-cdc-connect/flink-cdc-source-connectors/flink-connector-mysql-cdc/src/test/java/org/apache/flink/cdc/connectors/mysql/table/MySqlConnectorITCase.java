@@ -54,6 +54,7 @@ import org.testcontainers.lifecycle.Startables;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1777,6 +1778,7 @@ public class MySqlConnectorITCase extends MySqlSourceTestBase {
                                             .password(TEST_PASSWORD)
                                             .databaseList(inventoryDatabase.getDatabaseName())
                                             .tableList("products")
+                                            .serverTimeZone(ZoneId.of("UTC").toString())
                                             .createConfig(0)));
         }
 
