@@ -1675,8 +1675,7 @@ public class MySqlConnectorITCase extends MySqlSourceTestBase {
                     "UPDATE products SET description='18oz carpenter hammer' WHERE id=106;");
             statement.execute("UPDATE products SET weight='5.1' WHERE id=107;");
         }
-        Tuple2<String, Integer> offset =
-                currentMySqlLatestOffset(MYSQL_CONTAINER, inventoryDatabase, "products", 9);
+        Tuple2<String, Integer> offset = currentMySqlLatestOffset(inventoryDatabase, "products", 9);
 
         String sourceDDL =
                 String.format(
