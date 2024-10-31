@@ -20,7 +20,6 @@ package org.apache.flink.cdc.connectors.mysql;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.cdc.connectors.mysql.MySqlTestUtils.TestingListState;
 import org.apache.flink.cdc.connectors.mysql.table.StartupOptions;
-import org.apache.flink.cdc.connectors.mysql.testutils.MySqlContainer;
 import org.apache.flink.cdc.connectors.mysql.testutils.UniqueDatabase;
 import org.apache.flink.cdc.connectors.utils.TestSourceContext;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
@@ -54,8 +53,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -578,8 +575,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
                     "INSERT INTO products VALUES (default,'robot','Toy robot',1.304)"); // 110
         }
 
-        Tuple2<String, Integer> offset =
-                currentMySqlLatestOffset(MYSQL_CONTAINER, database, "products", 10);
+        Tuple2<String, Integer> offset = currentMySqlLatestOffset(database, "products", 10);
         final String offsetFile = offset.f0;
         final int offsetPos = offset.f1;
         final TestingListState<byte[]> offsetState = new TestingListState<>();
@@ -667,7 +663,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
             // Step-1: start the source from empty state
             // ---------------------------------------------------------------------------
             DebeziumSourceFunction<SourceRecord> source =
-                    basicSourceBuilder(database, "UTC")
+                    basicSourceBuilder(database, "products")
                             .tableList(database.getDatabaseName() + "." + "category")
                             .build();
             // we use blocking context to block the source to emit before last snapshot record
@@ -1021,23 +1017,9 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
 
     /** Gets the latest offset of current MySQL server. */
     public static Tuple2<String, Integer> currentMySqlLatestOffset(
-            MySqlContainer container,
-            UniqueDatabase database,
-            String table,
-            int expectedRecordCount)
-            throws Exception {
-        DebeziumSourceFunction<SourceRecord> source =
-                MySqlSource.<SourceRecord>builder()
-                        .hostname(container.getHost())
-                        .port(container.getDatabasePort())
-                        .databaseList(database.getDatabaseName())
-                        .tableList(database.getDatabaseName() + "." + table)
-                        .username(container.getUsername())
-                        .password(container.getPassword())
-                        .deserializer(new MySqlTestUtils.ForwardDeserializeSchema())
-                        .serverId(5400 + (new Random()).nextInt(1000))
-                        .debeziumProperties(new Properties())
-                        .build();
+            UniqueDatabase database, String table, int expectedRecordCount) throws Exception {
+
+        DebeziumSourceFunction<SourceRecord> source = basicSourceBuilder(database, table).build();
         final TestingListState<byte[]> offsetState = new TestingListState<>();
         final TestingListState<String> historyState = new TestingListState<>();
 
@@ -1113,13 +1095,13 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
 
     private DebeziumSourceFunction<SourceRecord> createMySqlBinlogSource(
             String offsetFile, int offsetPos) {
-        return basicSourceBuilder(database, "UTC")
+        return basicSourceBuilder(database, "products")
                 .startupOptions(StartupOptions.specificOffset(offsetFile, offsetPos))
                 .build();
     }
 
     private DebeziumSourceFunction<SourceRecord> createMySqlBinlogSource() {
-        return basicSourceBuilder(database, "UTC").build();
+        return basicSourceBuilder(database, "products").build();
     }
 
     private boolean waitForCheckpointLock(Object checkpointLock, Duration timeout)

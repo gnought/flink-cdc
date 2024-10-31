@@ -57,18 +57,17 @@ import static org.junit.Assert.assertTrue;
 public class MySqlTestUtils {
 
     public static MySqlSource.Builder<SourceRecord> basicSourceBuilder(
-            UniqueDatabase database, String serverTimezone) {
+            UniqueDatabase database, String table) {
         return MySqlSource.<SourceRecord>builder()
                 .hostname(database.getHost())
                 .port(database.getDatabasePort())
                 .databaseList(database.getDatabaseName())
-                .tableList(
-                        database.getDatabaseName() + "." + "products") // monitor table "products"
+                .tableList(database.getDatabaseName() + "." + table) // monitor table
                 .username(database.getUsername())
                 .password(database.getPassword())
                 .serverId(5400 + (new Random()).nextInt(1000))
                 .deserializer(new ForwardDeserializeSchema())
-                .serverTimeZone(serverTimezone)
+                .serverTimeZone("UTC")
                 .debeziumProperties(new Properties());
     }
 
