@@ -30,7 +30,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-/** Copy from testcontainers. */
+/**
+ * Testcontainers implementation for Oracle.
+ *
+ * <p>Exposed ports: 1521
+ */
+/** Copied from Testcontainer 1.20.3. */
 public class OracleContainer extends JdbcDatabaseContainer<OracleContainer> {
 
     public static final String NAME = "oracle";
@@ -76,7 +81,7 @@ public class OracleContainer extends JdbcDatabaseContainer<OracleContainer> {
 
     private boolean usingSid = false;
 
-    /** @deprecated use @link OracleContainer(DockerImageName) instead */
+    /** @deprecated use {@link #OracleContainer(DockerImageName)} instead */
     @Deprecated
     public OracleContainer() {
         this(DEFAULT_IMAGE_NAME.withTag(DEFAULT_TAG));
@@ -122,7 +127,12 @@ public class OracleContainer extends JdbcDatabaseContainer<OracleContainer> {
 
     @Override
     public String getDriverClassName() {
-        return "oracle.jdbc.driver.OracleDriver";
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+            return "oracle.jdbc.OracleDriver";
+        } catch (ClassNotFoundException e) {
+            return "oracle.jdbc.driver.OracleDriver";
+        }
     }
 
     @Override
