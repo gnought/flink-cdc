@@ -23,6 +23,7 @@ import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.cdc.debezium.internal.DebeziumOffset;
 
 import io.debezium.connector.mysql.MySqlConnector;
+import io.debezium.connector.mysql.MySqlPartition;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.util.HashMap;
@@ -212,9 +213,8 @@ public class MySqlSource {
                     props.setProperty("snapshot.mode", "schema_only_recovery");
 
                     specificOffset = new DebeziumOffset();
-                    Map<String, String> sourcePartition = new HashMap<>();
-                    sourcePartition.put("server", DATABASE_SERVER_NAME);
-                    specificOffset.setSourcePartition(sourcePartition);
+                    MySqlPartition partition = new MySqlPartition(DATABASE_SERVER_NAME, "");
+                    specificOffset.setSourcePartition(partition.getSourcePartition());
 
                     Map<String, Object> sourceOffset = new HashMap<>();
                     sourceOffset.put("file", startupOptions.binlogOffset.getFilename());
