@@ -29,7 +29,7 @@ import java.sql.DriverManager;
 public abstract class JdbcConnectionPoolFactory {
 
     public static final String CONNECTION_POOL_PREFIX = "connection-pool-";
-    public static final String SERVER_TIMEZONE_KEY = "serverTimezone";
+    public static final String SERVER_TIMEZONE_KEY = "connectionTimeZone";
     public static final int MINIMUM_POOL_SIZE = 1;
 
     public HikariDataSource createPooledDataSource(JdbcSourceConfig sourceConfig) {
