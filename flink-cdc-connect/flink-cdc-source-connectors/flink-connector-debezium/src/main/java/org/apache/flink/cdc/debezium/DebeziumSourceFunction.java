@@ -121,15 +121,6 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
     /** The maximum number of pending non-committed checkpoints to track, to avoid memory leaks. */
     public static final int MAX_NUM_PENDING_CHECKPOINTS = 100;
 
-    /**
-     * The configuration represents the Debezium MySQL Connector uses the legacy implementation or
-     * not.
-     */
-    public static final String LEGACY_IMPLEMENTATION_KEY = "internal.implementation";
-
-    /** The configuration value represents legacy implementation. */
-    public static final String LEGACY_IMPLEMENTATION_VALUE = "legacy";
-
     // ---------------------------------------------------------------------------------------
     // Properties
     // ---------------------------------------------------------------------------------------
@@ -566,20 +557,10 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
     }
 
     private Class<?> determineDatabase() {
-        boolean isCompatibleWithLegacy =
-                FlinkDatabaseHistory.isCompatible(retrieveHistory(engineInstanceName));
-        if (LEGACY_IMPLEMENTATION_VALUE.equals(properties.get(LEGACY_IMPLEMENTATION_KEY))) {
-            // specifies the legacy implementation but the state may be incompatible
-            if (isCompatibleWithLegacy) {
-                return FlinkDatabaseHistory.class;
-            } else {
-                throw new IllegalStateException(
-                        "The configured option 'debezium.internal.implementation' is 'legacy', but the state of source is incompatible with this implementation, you should remove the the option.");
-            }
-        } else if (FlinkDatabaseSchemaHistory.isCompatible(retrieveHistory(engineInstanceName))) {
+        if (FlinkDatabaseSchemaHistory.isCompatible(retrieveHistory(engineInstanceName))) {
             // tries the non-legacy first
             return FlinkDatabaseSchemaHistory.class;
-        } else if (isCompatibleWithLegacy) {
+        } else if (FlinkDatabaseHistory.isCompatible(retrieveHistory(engineInstanceName))) {
             // fallback to legacy if possible
             return FlinkDatabaseHistory.class;
         } else {

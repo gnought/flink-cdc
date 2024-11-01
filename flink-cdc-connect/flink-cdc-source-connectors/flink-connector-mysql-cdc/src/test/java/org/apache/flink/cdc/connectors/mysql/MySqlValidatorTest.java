@@ -193,7 +193,7 @@ public class MySqlValidatorTest {
 
         } else {
             DebeziumSourceFunction<SourceRecord> source =
-                    basicSourceBuilder(database, "UTC", false).build();
+                    basicSourceBuilder(database, "UTC").build();
             setupSource(source);
         }
     }
