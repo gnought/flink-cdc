@@ -50,7 +50,17 @@ import java.util.stream.Collectors;
 
 import static org.apache.flink.cdc.connectors.mysql.utils.MySqlTypeUtils.fromDbzColumn;
 
-/** Copied from {@link AlterTableParserListener} in Debezium 1.9.8.Final. */
+/**
+ * Parser listener that is parsing MySQL ALTER TABLE statements.
+ *
+ * @author Roman Kuchár <kucharrom@gmail.com>
+ */
+/**
+ * Copied from {@link AlterTableParserListener} in Debezium v2.0.0.Alpha1
+ *
+ * <p>A lot of changes on how Flink parses ALTER Table for streaming changes without modifying
+ * tableEditor.
+ */
 public class CustomAlterTableParserListener extends MySqlParserBaseListener {
 
     private static final int STARTING_INDEX = 1;
@@ -330,24 +340,6 @@ public class CustomAlterTableParserListener extends MySqlParserBaseListener {
     }
 
     @Override
-    public void enterAlterByDropColumn(MySqlParser.AlterByDropColumnContext ctx) {
-        String removedColName = parser.parseName(ctx.uid());
-        changes.add(new DropColumnEvent(currentTable, Collections.singletonList(removedColName)));
-        super.enterAlterByDropColumn(ctx);
-    }
-
-    @Override
-    public void enterAlterByRenameColumn(MySqlParser.AlterByRenameColumnContext ctx) {
-        String oldColumnName = parser.parseName(ctx.oldColumn);
-        ColumnEditor columnEditor = Column.editor().name(oldColumnName);
-        columnDefinitionListener =
-                new CustomColumnDefinitionParserListener(
-                        tableEditor, columnEditor, parser, listeners);
-        listeners.add(columnDefinitionListener);
-        super.enterAlterByRenameColumn(ctx);
-    }
-
-    @Override
     public void enterAlterByModifyColumn(MySqlParser.AlterByModifyColumnContext ctx) {
         String oldColumnName = parser.parseName(ctx.uid(0));
         ColumnEditor columnEditor = Column.editor().name(oldColumnName);
@@ -372,6 +364,24 @@ public class CustomAlterTableParserListener extends MySqlParserBaseListener {
                 },
                 columnDefinitionListener);
         super.exitAlterByModifyColumn(ctx);
+    }
+
+    @Override
+    public void enterAlterByDropColumn(MySqlParser.AlterByDropColumnContext ctx) {
+        String removedColName = parser.parseName(ctx.uid());
+        changes.add(new DropColumnEvent(currentTable, Collections.singletonList(removedColName)));
+        super.enterAlterByDropColumn(ctx);
+    }
+
+    @Override
+    public void enterAlterByRenameColumn(MySqlParser.AlterByRenameColumnContext ctx) {
+        String oldColumnName = parser.parseName(ctx.oldColumn);
+        ColumnEditor columnEditor = Column.editor().name(oldColumnName);
+        columnDefinitionListener =
+                new CustomColumnDefinitionParserListener(
+                        tableEditor, columnEditor, parser, listeners);
+        listeners.add(columnDefinitionListener);
+        super.enterAlterByRenameColumn(ctx);
     }
 
     @Override
