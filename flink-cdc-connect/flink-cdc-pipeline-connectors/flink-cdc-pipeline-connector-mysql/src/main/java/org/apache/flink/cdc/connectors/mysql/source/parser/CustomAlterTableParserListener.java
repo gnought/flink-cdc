@@ -30,11 +30,10 @@ import org.apache.flink.cdc.common.types.DataType;
 
 import io.debezium.connector.mysql.antlr.MySqlAntlrDdlParser;
 import io.debezium.connector.mysql.antlr.listener.AlterTableParserListener;
+import io.debezium.connector.mysql.antlr.listener.TableCommonParserListener;
 import io.debezium.ddl.parser.mysql.generated.MySqlParser;
-import io.debezium.ddl.parser.mysql.generated.MySqlParserBaseListener;
 import io.debezium.relational.Column;
 import io.debezium.relational.ColumnEditor;
-import io.debezium.relational.TableEditor;
 import io.debezium.relational.TableId;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.slf4j.Logger;
@@ -56,24 +55,21 @@ import static org.apache.flink.cdc.connectors.mysql.utils.MySqlTypeUtils.fromDbz
  * @author Roman Kuchár <kucharrom@gmail.com>
  */
 /**
- * Copied from {@link AlterTableParserListener} in Debezium v2.0.0.Alpha1
+ * Copied from {@link AlterTableParserListener} in Debezium v2.0.1.Final
  *
  * <p>A lot of changes on how Flink parses ALTER Table for streaming changes without modifying
  * tableEditor.
  */
-public class CustomAlterTableParserListener extends MySqlParserBaseListener {
+public class CustomAlterTableParserListener extends TableCommonParserListener {
 
     private static final int STARTING_INDEX = 1;
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomAlterTableParserListener.class);
 
-    private final MySqlAntlrDdlParser parser;
-    private final List<ParseTreeListener> listeners;
     private final LinkedList<SchemaChangeEvent> changes;
     private org.apache.flink.cdc.common.event.TableId currentTable;
     private List<ColumnEditor> columnEditors;
     private CustomColumnDefinitionParserListener columnDefinitionListener;
-    private TableEditor tableEditor;
 
     private int parsingColumnIndex = STARTING_INDEX;
 
@@ -81,8 +77,7 @@ public class CustomAlterTableParserListener extends MySqlParserBaseListener {
             MySqlAntlrDdlParser parser,
             List<ParseTreeListener> listeners,
             LinkedList<SchemaChangeEvent> changes) {
-        this.parser = parser;
-        this.listeners = listeners;
+        super(parser, listeners);
         this.changes = changes;
     }
 
@@ -154,39 +149,6 @@ public class CustomAlterTableParserListener extends MySqlParserBaseListener {
                 },
                 tableEditor);
         super.enterColumnDeclaration(ctx);
-    }
-
-    @Override
-    public void exitColumnDeclaration(MySqlParser.ColumnDeclarationContext ctx) {
-        parser.runIfNotNull(
-                () -> {
-                    tableEditor.addColumn(columnDefinitionListener.getColumn());
-                },
-                tableEditor,
-                columnDefinitionListener);
-        super.exitColumnDeclaration(ctx);
-    }
-
-    @Override
-    public void enterPrimaryKeyTableConstraint(MySqlParser.PrimaryKeyTableConstraintContext ctx) {
-        parser.runIfNotNull(
-                () -> {
-                    parser.parsePrimaryIndexColumnNames(ctx.indexColumnNames(), tableEditor);
-                },
-                tableEditor);
-        super.enterPrimaryKeyTableConstraint(ctx);
-    }
-
-    @Override
-    public void enterUniqueKeyTableConstraint(MySqlParser.UniqueKeyTableConstraintContext ctx) {
-        parser.runIfNotNull(
-                () -> {
-                    if (!tableEditor.hasPrimaryKey()) {
-                        parser.parsePrimaryIndexColumnNames(ctx.indexColumnNames(), tableEditor);
-                    }
-                },
-                tableEditor);
-        super.enterUniqueKeyTableConstraint(ctx);
     }
 
     @Override
