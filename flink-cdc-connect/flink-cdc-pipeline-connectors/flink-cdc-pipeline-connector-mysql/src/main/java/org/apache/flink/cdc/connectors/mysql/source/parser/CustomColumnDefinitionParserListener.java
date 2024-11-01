@@ -20,6 +20,7 @@ package org.apache.flink.cdc.connectors.mysql.source.parser;
 import io.debezium.antlr.AntlrDdlParser;
 import io.debezium.antlr.DataTypeResolver;
 import io.debezium.connector.mysql.antlr.MySqlAntlrDdlParser;
+import io.debezium.connector.mysql.antlr.listener.ColumnDefinitionParserListener;
 import io.debezium.connector.mysql.antlr.listener.DefaultValueParserListener;
 import io.debezium.ddl.parser.mysql.generated.MySqlParser;
 import io.debezium.ddl.parser.mysql.generated.MySqlParserBaseListener;
@@ -38,7 +39,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/** Parser listener that is parsing column definition part of MySQL statements. */
+/**
+ * Parser listener that is parsing column definition part of MySQL statements.
+ *
+ * @author Roman Kuchár <kucharrom@gmail.com>
+ */
+/** Copied from {@link ColumnDefinitionParserListener} in Debezium v2.0.0.Alpha1. */
 public class CustomColumnDefinitionParserListener extends MySqlParserBaseListener {
 
     private static final Logger LOGGER =
@@ -47,11 +53,11 @@ public class CustomColumnDefinitionParserListener extends MySqlParserBaseListene
     private static final Pattern DOT = Pattern.compile("\\.");
     private final MySqlAntlrDdlParser parser;
     private final DataTypeResolver dataTypeResolver;
+    private final TableEditor tableEditor;
     private ColumnEditor columnEditor;
     private boolean uniqueColumn;
     private AtomicReference<Boolean> optionalColumn = new AtomicReference<>();
     private DefaultValueParserListener defaultValueListener;
-    private final TableEditor tableEditor;
 
     private final List<ParseTreeListener> listeners;
 
