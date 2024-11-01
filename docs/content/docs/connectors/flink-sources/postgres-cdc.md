@@ -159,7 +159,7 @@ SELECT * FROM shipments;
       <td style="word-wrap: break-word;">decoderbufs</td>
       <td>String</td>
       <td>The name of the Postgres logical decoding plug-in installed on the server.
-          Supported values are decoderbufs, wal2json, wal2json_rds, wal2json_streaming, wal2json_rds_streaming and pgoutput.</td>
+          Supported values are decoderbufs and pgoutput.</td>
     </tr>
     <tr>
       <td>changelog-mode</td>

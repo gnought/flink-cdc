@@ -357,9 +357,9 @@ public class PostgresReplicationConnection extends JdbcConnection implements Rep
      * creating a replication connection and starting to stream involves a few steps: 1. we create
      * the connection and ensure that a. the slot exists b. the slot isn't currently being used 2.
      * we query to get our potential start position in the slot (lsn) 3. we try and start streaming,
-     * depending on our options (such as in wal2json) this may fail, which can result in the
-     * connection being killed and we need to start the process over if we are using a temporary
-     * slot 4. actually start the streamer
+     * depending on our options this may fail, which can result in the connection being killed and
+     * we need to start the process over if we are using a temporary slot 4. actually start the
+     * streamer
      *
      * <p>This method takes care of all of these and this method queries for a default starting
      * position If you know where you are starting from you should call {@link #startStreaming(Lsn,

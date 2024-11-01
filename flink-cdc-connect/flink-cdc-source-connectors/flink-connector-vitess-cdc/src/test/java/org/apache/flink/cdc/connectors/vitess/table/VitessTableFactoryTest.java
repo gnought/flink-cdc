@@ -98,7 +98,7 @@ public class VitessTableFactoryTest {
     public void testOptionalProperties() {
         Map<String, String> options = getAllOptions();
         options.put("port", "5444");
-        options.put("decoding.plugin.name", "wal2json");
+        options.put("decoding.plugin.name", "pgoutput");
         options.put("debezium.snapshot.mode", "never");
         options.put("name", "flink");
         options.put("tablet-type", "MASTER");
@@ -123,7 +123,7 @@ public class VitessTableFactoryTest {
                         true,
                         SchemaAdjustmentMode.AVRO,
                         TabletType.MASTER,
-                        "wal2json",
+                        "pgoutput",
                         "flink",
                         dbzProperties);
         assertEquals(expectedSource, actualSource);
