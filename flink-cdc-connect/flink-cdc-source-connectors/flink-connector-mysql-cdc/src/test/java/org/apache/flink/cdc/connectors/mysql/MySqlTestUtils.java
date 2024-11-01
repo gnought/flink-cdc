@@ -56,8 +56,7 @@ import static org.junit.Assert.assertTrue;
 public class MySqlTestUtils {
 
     public static MySqlSource.Builder<SourceRecord> basicSourceBuilder(
-            UniqueDatabase database, String serverTimezone, boolean useLegacyImplementation) {
-        Properties debeziumProps = createDebeziumProperties(useLegacyImplementation);
+            UniqueDatabase database, String serverTimezone) {
         return MySqlSource.<SourceRecord>builder()
                 .hostname(database.getHost())
                 .port(database.getDatabasePort())
@@ -68,7 +67,7 @@ public class MySqlTestUtils {
                 .password(database.getPassword())
                 .deserializer(new ForwardDeserializeSchema())
                 .serverTimeZone(serverTimezone)
-                .debeziumProperties(debeziumProps);
+                .debeziumProperties(new Properties());
     }
 
     public static <T> void setupSource(DebeziumSourceFunction<T> source) throws Exception {
@@ -161,19 +160,6 @@ public class MySqlTestUtils {
                 deadline,
                 100L,
                 "Condition was not met in given timeout.");
-    }
-
-    private static Properties createDebeziumProperties(boolean useLegacyImplementation) {
-        Properties debeziumProps = new Properties();
-        if (useLegacyImplementation) {
-            debeziumProps.put("internal.implementation", "legacy");
-            // check legacy mysql record type
-            debeziumProps.put("transforms", "snapshotasinsert");
-            debeziumProps.put(
-                    "transforms.snapshotasinsert.type",
-                    "io.debezium.connector.mysql.transforms.ReadToInsertEvent");
-        }
-        return debeziumProps;
     }
 
     public static void assertContainsErrorMsg(Throwable t, String errorMsg) {

@@ -24,7 +24,6 @@ import org.apache.flink.cdc.connectors.mysql.testutils.MySqlContainer;
 import org.apache.flink.cdc.connectors.mysql.testutils.UniqueDatabase;
 import org.apache.flink.cdc.connectors.utils.TestSourceContext;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.cdc.debezium.internal.Handover;
 import org.apache.flink.core.testutils.CheckedThread;
 import org.apache.flink.runtime.state.StateSnapshotContextSynchronousImpl;
@@ -40,21 +39,16 @@ import io.debezium.relational.Table;
 import io.debezium.relational.TableEditor;
 import io.debezium.relational.TableId;
 import io.debezium.relational.history.HistoryRecord;
-import io.debezium.relational.history.TableChanges;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +74,6 @@ import static org.junit.Assert.fail;
 /**
  * Tests for the legacy {@link MySqlSource} which also heavily tests {@link DebeziumSourceFunction}.
  */
-@RunWith(Parameterized.class)
 public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
 
     private final UniqueDatabase database =
@@ -89,13 +82,6 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
     @Override
     public String getTempFilePath(String fileName) throws IOException {
         return super.getTempFilePath(fileName);
-    }
-
-    @Parameterized.Parameter public boolean useLegacyImplementation;
-
-    @Parameterized.Parameters(name = "UseLegacyImplementation: {0}")
-    public static Collection<Boolean> parameters() {
-        return Arrays.asList(false, true);
     }
 
     @Before
@@ -131,11 +117,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
             List<SourceRecord> records = drain(sourceContext, 9);
             assertEquals(9, records.size());
             for (int i = 0; i < records.size(); i++) {
-                if (this.useLegacyImplementation) {
-                    assertInsert(records.get(i), "id", 101 + i);
-                } else {
-                    assertRead(records.get(i), "id", 101 + i);
-                }
+                assertRead(records.get(i), "id", 101 + i);
             }
 
             statement.execute(
@@ -594,8 +576,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
         }
 
         Tuple2<String, Integer> offset =
-                currentMySqlLatestOffset(
-                        MYSQL_CONTAINER, database, "products", 10, useLegacyImplementation);
+                currentMySqlLatestOffset(MYSQL_CONTAINER, database, "products", 10);
         final String offsetFile = offset.f0;
         final int offsetPos = offset.f1;
         final TestingListState<byte[]> offsetState = new TestingListState<>();
@@ -683,7 +664,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
             // Step-1: start the source from empty state
             // ---------------------------------------------------------------------------
             DebeziumSourceFunction<SourceRecord> source =
-                    basicSourceBuilder(database, "UTC", useLegacyImplementation)
+                    basicSourceBuilder(database, "UTC")
                             .tableList(database.getDatabaseName() + "." + "category")
                             .build();
             // we use blocking context to block the source to emit before last snapshot record
@@ -763,29 +744,17 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
 
         historyState.add("engine-name");
         DocumentWriter writer = DocumentWriter.defaultWriter();
-        if (useLegacyImplementation) {
-            // build a non-legacy state
-            FlinkJsonTableChangeSerializer tableChangesSerializer =
-                    new FlinkJsonTableChangeSerializer();
-            historyState.add(
-                    writer.write(
-                            tableChangesSerializer.toDocument(
-                                    new TableChanges.TableChange(
-                                            TableChanges.TableChangeType.CREATE,
-                                            MockedTable.INSTANCE))));
-        } else {
-            // build a legacy state
-            Document document =
-                    new HistoryRecord(
-                                    Collections.emptyMap(),
-                                    Collections.emptyMap(),
-                                    "test",
-                                    "test",
-                                    "CREATE TABLE test(a int)",
-                                    null)
-                            .document();
-            historyState.add(writer.write(document));
-        }
+        // build a legacy state
+        Document document =
+                new HistoryRecord(
+                                Collections.emptyMap(),
+                                Collections.emptyMap(),
+                                "test",
+                                "test",
+                                "CREATE TABLE test(a int)",
+                                null)
+                        .document();
+        historyState.add(writer.write(document));
 
         final DebeziumSourceFunction<SourceRecord> source = createMySqlBinlogSource();
         setupSource(source, true, offsetState, historyState, true, 0, 1);
@@ -800,25 +769,11 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
                     }
                 };
         runThread.start();
-        if (useLegacyImplementation) {
-            // should fail because user specifies to use the legacy implementation
-            try {
-                source.close();
-                runThread.sync();
-                fail("Should fail.");
-            } catch (Exception e) {
-                assertTrue(e instanceof IllegalStateException);
-                assertEquals(
-                        "The configured option 'debezium.internal.implementation' is 'legacy', but the state of source is incompatible with this implementation, you should remove the the option.",
-                        e.getMessage());
-            }
-        } else {
-            // check the debezium status to verify
-            waitDebeziumStartWithTimeout(source, 5_000L);
+        // check the debezium status to verify
+        waitDebeziumStartWithTimeout(source, 5_000L);
 
-            source.close();
-            runThread.sync();
-        }
+        source.close();
+        runThread.sync();
     }
 
     @Test
@@ -1065,8 +1020,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
             MySqlContainer container,
             UniqueDatabase database,
             String table,
-            int expectedRecordCount,
-            boolean useLegacyImplementation)
+            int expectedRecordCount)
             throws Exception {
         DebeziumSourceFunction<SourceRecord> source =
                 MySqlSource.<SourceRecord>builder()
@@ -1077,7 +1031,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
                         .username(container.getUsername())
                         .password(container.getPassword())
                         .deserializer(new MySqlTestUtils.ForwardDeserializeSchema())
-                        .debeziumProperties(createDebeziumProperties(useLegacyImplementation))
+                        .debeziumProperties(new Properties())
                         .build();
         final TestingListState<byte[]> offsetState = new TestingListState<>();
         final TestingListState<String> historyState = new TestingListState<>();
@@ -1117,19 +1071,6 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
         return Tuple2.of(offsetFile, offsetPos);
     }
 
-    private static Properties createDebeziumProperties(boolean useLegacyImplementation) {
-        Properties debeziumProps = new Properties();
-        if (useLegacyImplementation) {
-            debeziumProps.put("internal.implementation", "legacy");
-            // check legacy mysql record type
-            debeziumProps.put("transforms", "snapshotasinsert");
-            debeziumProps.put(
-                    "transforms.snapshotasinsert.type",
-                    "io.debezium.connector.mysql.transforms.ReadToInsertEvent");
-        }
-        return debeziumProps;
-    }
-
     // ------------------------------------------------------------------------------------------
     // Utilities
     // ------------------------------------------------------------------------------------------
@@ -1150,48 +1091,30 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
     private void assertHistoryState(TestingListState<String> historyState) {
         assertTrue(historyState.list.size() > 0);
         // assert the DDL is stored in the history state
-        if (!useLegacyImplementation) {
-            boolean hasTable =
-                    historyState.list.stream()
-                            .skip(1)
-                            .anyMatch(
-                                    history ->
-                                            !((Map<?, ?>) JsonPath.read(history, "$.table"))
-                                                            .isEmpty()
-                                                    && (JsonPath.read(history, "$.type")
-                                                                    .toString()
-                                                                    .equals("CREATE")
-                                                            || JsonPath.read(history, "$.type")
-                                                                    .toString()
-                                                                    .equals("ALTER")));
-            assertTrue(hasTable);
-        } else {
-            boolean hasDDL =
-                    historyState.list.stream()
-                            .skip(1)
-                            .anyMatch(
-                                    history ->
-                                            JsonPath.read(history, "$.source.server")
-                                                            .equals("mysql_binlog_source")
-                                                    && JsonPath.read(history, "$.position.snapshot")
-                                                            .toString()
-                                                            .equals("true")
-                                                    && JsonPath.read(history, "$.ddl")
-                                                            .toString()
-                                                            .startsWith("CREATE TABLE `products`"));
-            assertTrue(hasDDL);
-        }
+        boolean hasTable =
+                historyState.list.stream()
+                        .skip(1)
+                        .anyMatch(
+                                history ->
+                                        !((Map<?, ?>) JsonPath.read(history, "$.table")).isEmpty()
+                                                && (JsonPath.read(history, "$.type")
+                                                                .toString()
+                                                                .equals("CREATE")
+                                                        || JsonPath.read(history, "$.type")
+                                                                .toString()
+                                                                .equals("ALTER")));
+        assertTrue(hasTable);
     }
 
     private DebeziumSourceFunction<SourceRecord> createMySqlBinlogSource(
             String offsetFile, int offsetPos) {
-        return basicSourceBuilder(database, "UTC", useLegacyImplementation)
+        return basicSourceBuilder(database, "UTC")
                 .startupOptions(StartupOptions.specificOffset(offsetFile, offsetPos))
                 .build();
     }
 
     private DebeziumSourceFunction<SourceRecord> createMySqlBinlogSource() {
-        return basicSourceBuilder(database, "UTC", useLegacyImplementation).build();
+        return basicSourceBuilder(database, "UTC").build();
     }
 
     private boolean waitForCheckpointLock(Object checkpointLock, Duration timeout)

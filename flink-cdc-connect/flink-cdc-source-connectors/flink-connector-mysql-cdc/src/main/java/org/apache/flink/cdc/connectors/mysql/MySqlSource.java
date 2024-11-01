@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.apache.flink.cdc.debezium.DebeziumSourceFunction.LEGACY_IMPLEMENTATION_KEY;
-import static org.apache.flink.cdc.debezium.DebeziumSourceFunction.LEGACY_IMPLEMENTATION_VALUE;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
@@ -237,15 +235,6 @@ public class MySqlSource {
 
             if (dbzProperties != null) {
                 props.putAll(dbzProperties);
-                // Add default configurations for compatibility when set the legacy mysql connector
-                // implementation
-                if (LEGACY_IMPLEMENTATION_VALUE.equals(
-                        dbzProperties.get(LEGACY_IMPLEMENTATION_KEY))) {
-                    props.put("transforms", "snapshotasinsert");
-                    props.put(
-                            "transforms.snapshotasinsert.type",
-                            "io.debezium.connector.mysql.transforms.ReadToInsertEvent");
-                }
             }
 
             return new DebeziumSourceFunction<>(

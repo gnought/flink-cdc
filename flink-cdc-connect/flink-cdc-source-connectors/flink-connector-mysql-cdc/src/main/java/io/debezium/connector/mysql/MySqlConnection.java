@@ -13,8 +13,8 @@ import io.debezium.config.CommonConnectorConfig.EventProcessingFailureHandlingMo
 import io.debezium.config.Configuration;
 import io.debezium.config.Configuration.Builder;
 import io.debezium.config.Field;
+import io.debezium.connector.mysql.MySqlConnection.DatabaseLocales;
 import io.debezium.connector.mysql.MySqlConnectorConfig.SecureConnectionMode;
-import io.debezium.connector.mysql.legacy.MySqlJdbcContext.DatabaseLocales;
 import io.debezium.jdbc.JdbcConfiguration;
 import io.debezium.jdbc.JdbcConnection;
 import io.debezium.relational.Column;
