@@ -313,7 +313,7 @@ public class MySqlSourceConfigFactory implements Serializable {
         props.setProperty("database.port", String.valueOf(port));
         props.setProperty("database.fetchSize", String.valueOf(fetchSize));
         props.setProperty("database.responseBuffering", "adaptive");
-        props.setProperty("database.serverTimezone", serverTimeZone);
+        props.setProperty("database.connectionTimeZone", serverTimeZone);
         // database history
         props.setProperty(
                 "database.history", EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
@@ -347,7 +347,7 @@ public class MySqlSourceConfigFactory implements Serializable {
             props.setProperty("table.include.list", String.join(",", tableList));
         }
         if (serverTimeZone != null) {
-            props.setProperty("database.serverTimezone", serverTimeZone);
+            props.setProperty("database.connectionTimeZone", serverTimeZone);
         }
 
         // override the user-defined debezium properties
