@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.flink.cdc.connectors.base.source;
+package org.apache.flink.cdc.connectors.base.experimental;
 
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitState;
 
@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * <p>It stores/recovers history using data offered by {@link SourceSplitState}.
  */
-public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
+public class EmbeddedFlinkSchemaHistory implements SchemaHistory {
 
     public static final ConcurrentMap<String, Collection<TableChange>> TABLE_SCHEMAS =
             new ConcurrentHashMap<>();

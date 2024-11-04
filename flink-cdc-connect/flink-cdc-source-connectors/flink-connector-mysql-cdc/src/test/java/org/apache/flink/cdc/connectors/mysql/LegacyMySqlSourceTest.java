@@ -65,7 +65,7 @@ import static org.apache.flink.cdc.connectors.utils.AssertUtils.assertDelete;
 import static org.apache.flink.cdc.connectors.utils.AssertUtils.assertInsert;
 import static org.apache.flink.cdc.connectors.utils.AssertUtils.assertRead;
 import static org.apache.flink.cdc.connectors.utils.AssertUtils.assertUpdate;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.removeHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.removeHistory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

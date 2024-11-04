@@ -90,8 +90,8 @@ public class MySqlSplitSerializerTest {
                         null,
                         BinlogOffset.ofBinlogFilePosition("mysql-bin.000001", 800L)));
 
-        final Map<TableId, TableChange> databaseHistory = new HashMap<>();
-        databaseHistory.put(tableId, getTestTableSchema());
+        final Map<TableId, TableChange> schemaHistory = new HashMap<>();
+        schemaHistory.put(tableId, getTestTableSchema());
 
         final MySqlSplit split =
                 new MySqlBinlogSplit(
@@ -99,7 +99,7 @@ public class MySqlSplitSerializerTest {
                         BinlogOffset.ofBinlogFilePosition("mysql-bin.000001", 4L),
                         BinlogOffset.ofNonStopping(),
                         finishedSplitsInfo,
-                        databaseHistory,
+                        schemaHistory,
                         finishedSplitsInfo.size());
         assertEquals(split, serializeAndDeserializeSplit(split));
 

@@ -28,9 +28,9 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.registerHistory;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.removeHistory;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.registerHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.removeHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHistory;
 
 /**
  * Inspired from {@link io.debezium.relational.history.MemorySchemaHistory} but we will store the
@@ -40,7 +40,7 @@ import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHi
  * records will be stored in state (grow infinitely). We may need to come up with a
  * FileSystemDatabaseHistory in the future to store history in HDFS.
  */
-public class FlinkDatabaseHistory extends AbstractSchemaHistory {
+public class FlinkSchemaHistory extends AbstractSchemaHistory {
 
     private ConcurrentLinkedQueue<SchemaRecord> schemaRecords;
     private String instanceName;
@@ -97,9 +97,7 @@ public class FlinkDatabaseHistory extends AbstractSchemaHistory {
         return "Flink Database History";
     }
 
-    /**
-     * Determine whether the {@link FlinkDatabaseHistory} is compatible with the specified state.
-     */
+    /** Determine whether the {@link FlinkSchemaHistory} is compatible with the specified state. */
     public static boolean isCompatible(Collection<SchemaRecord> records) {
         for (SchemaRecord record : records) {
             // check the source/position/ddl is not null

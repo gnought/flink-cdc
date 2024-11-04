@@ -20,7 +20,7 @@ package org.apache.flink.cdc.connectors.oracle.source.reader.fetch;
 import org.apache.flink.cdc.connectors.base.config.JdbcSourceConfig;
 import org.apache.flink.cdc.connectors.base.dialect.JdbcDataSourceDialect;
 import org.apache.flink.cdc.connectors.base.relational.JdbcSourceEventDispatcher;
-import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.base.source.meta.offset.Offset;
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitBase;
 import org.apache.flink.cdc.connectors.base.source.reader.external.JdbcSourceFetchTaskContext;
@@ -105,7 +105,7 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         final OracleConnectorConfig connectorConfig = getDbzConnectorConfig();
         this.topicNamingStrategy =
                 connectorConfig.getTopicNamingStrategy(OracleConnectorConfig.TOPIC_NAMING_STRATEGY);
-        EmbeddedFlinkDatabaseHistory.registerHistory(
+        EmbeddedFlinkSchemaHistory.registerHistory(
                 sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 sourceSplitBase.getTableSchemas().values());
         this.databaseSchema = OracleUtils.createOracleDatabaseSchema(connectorConfig, connection);

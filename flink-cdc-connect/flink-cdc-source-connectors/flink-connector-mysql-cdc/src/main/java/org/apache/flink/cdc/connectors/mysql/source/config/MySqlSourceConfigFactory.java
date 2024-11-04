@@ -18,7 +18,7 @@
 package org.apache.flink.cdc.connectors.mysql.source.config;
 
 import org.apache.flink.cdc.common.annotation.Internal;
-import org.apache.flink.cdc.connectors.mysql.debezium.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.mysql.debezium.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.mysql.source.MySqlSource;
 import org.apache.flink.cdc.connectors.mysql.table.StartupOptions;
 import org.apache.flink.table.catalog.ObjectPath;
@@ -320,7 +320,7 @@ public class MySqlSourceConfigFactory implements Serializable {
         // database schema history
         props.setProperty(
                 HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
-                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+                EmbeddedFlinkSchemaHistory.class.getCanonicalName());
         props.setProperty(
                 SchemaHistory.NAME.name(), UUID.randomUUID().toString() + "_" + subtaskId);
         props.setProperty(
