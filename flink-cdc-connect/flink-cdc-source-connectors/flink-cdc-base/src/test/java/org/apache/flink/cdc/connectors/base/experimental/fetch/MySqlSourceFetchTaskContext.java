@@ -19,7 +19,7 @@ package org.apache.flink.cdc.connectors.base.experimental.fetch;
 
 import org.apache.flink.cdc.connectors.base.config.JdbcSourceConfig;
 import org.apache.flink.cdc.connectors.base.dialect.JdbcDataSourceDialect;
-import org.apache.flink.cdc.connectors.base.experimental.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.base.experimental.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.base.experimental.config.MySqlSourceConfig;
 import org.apache.flink.cdc.connectors.base.experimental.handler.MySqlSchemaChangeEventHandler;
 import org.apache.flink.cdc.connectors.base.experimental.offset.BinlogOffset;
@@ -102,7 +102,7 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         final boolean tableIdCaseInsensitive = connection.isTableIdCaseSensitive();
         this.topicNamingStrategy =
                 connectorConfig.getTopicNamingStrategy(MySqlConnectorConfig.TOPIC_NAMING_STRATEGY);
-        EmbeddedFlinkDatabaseHistory.registerHistory(
+        EmbeddedFlinkSchemaHistory.registerHistory(
                 sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 sourceSplitBase.getTableSchemas().values());
         this.databaseSchema =

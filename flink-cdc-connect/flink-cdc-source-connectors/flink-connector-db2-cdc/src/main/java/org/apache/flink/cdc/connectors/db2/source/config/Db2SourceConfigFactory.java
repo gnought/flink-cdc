@@ -18,7 +18,7 @@
 package org.apache.flink.cdc.connectors.db2.source.config;
 
 import org.apache.flink.cdc.connectors.base.config.JdbcSourceConfigFactory;
-import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.db2.Db2Connector;
@@ -46,7 +46,7 @@ public class Db2SourceConfigFactory extends JdbcSourceConfigFactory {
         // set database schema history impl to flink database schema history
         props.setProperty(
                 HistorizedRelationalDatabaseConnectorConfig.SCHEMA_HISTORY.name(),
-                EmbeddedFlinkDatabaseHistory.class.getCanonicalName());
+                EmbeddedFlinkSchemaHistory.class.getCanonicalName());
         props.setProperty(SchemaHistory.NAME.name(), UUID.randomUUID() + "_" + subtask);
         props.setProperty(
                 SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));

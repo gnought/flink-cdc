@@ -31,9 +31,9 @@ import java.util.Map;
  * Util to safely visit schema history between {@link SchemaHistory} and {@link
  * DebeziumSourceFunction}.
  */
-public class DatabaseHistoryUtil {
+public class SchemaHistoryUtil {
 
-    private DatabaseHistoryUtil() {
+    private SchemaHistoryUtil() {
         // do nothing
     }
 

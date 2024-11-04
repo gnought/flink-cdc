@@ -19,7 +19,7 @@ package org.apache.flink.cdc.connectors.db2.source.fetch;
 
 import org.apache.flink.cdc.connectors.base.config.JdbcSourceConfig;
 import org.apache.flink.cdc.connectors.base.relational.JdbcSourceEventDispatcher;
-import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.base.source.meta.offset.Offset;
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitBase;
 import org.apache.flink.cdc.connectors.base.source.reader.external.JdbcSourceFetchTaskContext;
@@ -103,7 +103,7 @@ public class Db2SourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         final Db2ConnectorConfig connectorConfig = getDbzConnectorConfig();
         this.topicNamingStrategy =
                 connectorConfig.getTopicNamingStrategy(Db2ConnectorConfig.TOPIC_NAMING_STRATEGY);
-        EmbeddedFlinkDatabaseHistory.registerHistory(
+        EmbeddedFlinkSchemaHistory.registerHistory(
                 sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 sourceSplitBase.getTableSchemas().values());
 

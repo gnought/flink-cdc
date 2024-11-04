@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.flink.cdc.connectors.mysql.debezium;
+package org.apache.flink.cdc.connectors.base.source;
 
-import org.apache.flink.cdc.connectors.mysql.source.split.MySqlSplitState;
+import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitState;
 
 import io.debezium.config.Configuration;
-import io.debezium.pipeline.spi.Offsets;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
 import io.debezium.relational.ddl.DdlParser;
@@ -43,9 +42,9 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A {@link SchemaHistory} implementation which store the latest table schema in Flink state.
  *
- * <p>It stores/recovers history using data offered by {@link MySqlSplitState}.
+ * <p>It stores/recovers schema history using data offered by {@link SourceSplitState}.
  */
-public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
+public class EmbeddedFlinkSchemaHistory implements SchemaHistory {
 
     public static final ConcurrentMap<String, Collection<TableChange>> TABLE_SCHEMAS =
             new ConcurrentHashMap<>();
@@ -102,7 +101,8 @@ public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
     }
 
     @Override
-    public void recover(Offsets<?, ?> offsets, Tables schema, DdlParser ddlParser) {
+    public void recover(
+            Map<String, ?> source, Map<String, ?> position, Tables schema, DdlParser ddlParser) {
         listener.recoveryStarted();
         for (TableChange tableChange : tableSchemas.values()) {
             schema.overwriteTable(tableChange.getTable());
@@ -113,11 +113,7 @@ public class EmbeddedFlinkDatabaseHistory implements SchemaHistory {
     @Override
     public void recover(
             Map<Map<String, ?>, Map<String, ?>> offsets, Tables schema, DdlParser ddlParser) {
-        listener.recoveryStarted();
-        for (TableChange tableChange : tableSchemas.values()) {
-            schema.overwriteTable(tableChange.getTable());
-        }
-        listener.recoveryStopped();
+        offsets.forEach((source, position) -> recover(source, position, schema, ddlParser));
     }
 
     @Override

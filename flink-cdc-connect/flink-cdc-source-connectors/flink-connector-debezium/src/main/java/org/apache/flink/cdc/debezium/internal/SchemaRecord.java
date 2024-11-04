@@ -30,7 +30,7 @@ import java.io.IOException;
  * The Record represents a schema change event, it contains either one {@link HistoryRecord} or
  * {@link TableChange}.
  *
- * <p>The {@link HistoryRecord} will be used by {@link FlinkDatabaseHistory} which keeps full
+ * <p>The {@link HistoryRecord} will be used by {@link FlinkSchemaHistory} which keeps full schema
  * history of table change events for all tables, the {@link TableChange} will be used by {@link
  * FlinkDatabaseSchemaHistory} which keeps the latest table change for each table.
  */

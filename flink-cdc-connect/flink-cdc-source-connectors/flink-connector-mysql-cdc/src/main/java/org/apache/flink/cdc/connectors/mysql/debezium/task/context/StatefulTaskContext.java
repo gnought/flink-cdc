@@ -18,7 +18,7 @@
 package org.apache.flink.cdc.connectors.mysql.debezium.task.context;
 
 import org.apache.flink.cdc.connectors.mysql.debezium.DebeziumUtils;
-import org.apache.flink.cdc.connectors.mysql.debezium.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.mysql.debezium.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.mysql.debezium.dispatcher.EventDispatcherImpl;
 import org.apache.flink.cdc.connectors.mysql.debezium.dispatcher.SignalEventDispatcher;
 import org.apache.flink.cdc.connectors.mysql.source.config.MySqlSourceConfig;
@@ -114,7 +114,7 @@ public class StatefulTaskContext {
         final boolean tableIdCaseInsensitive = connection.isTableIdCaseSensitive();
         this.topicNamingSelector =
                 connectorConfig.getTopicNamingStrategy(MySqlConnectorConfig.TOPIC_NAMING_STRATEGY);
-        EmbeddedFlinkDatabaseHistory.registerHistory(
+        EmbeddedFlinkSchemaHistory.registerHistory(
                 sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 mySqlSplit.getTableSchemas().values());
 

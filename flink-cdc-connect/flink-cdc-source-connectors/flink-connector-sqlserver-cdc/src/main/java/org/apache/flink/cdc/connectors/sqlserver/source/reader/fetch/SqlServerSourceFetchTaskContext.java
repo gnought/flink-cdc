@@ -19,7 +19,7 @@ package org.apache.flink.cdc.connectors.sqlserver.source.reader.fetch;
 
 import org.apache.flink.cdc.connectors.base.config.JdbcSourceConfig;
 import org.apache.flink.cdc.connectors.base.relational.JdbcSourceEventDispatcher;
-import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkDatabaseHistory;
+import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 import org.apache.flink.cdc.connectors.base.source.meta.offset.Offset;
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitBase;
 import org.apache.flink.cdc.connectors.base.source.reader.external.JdbcSourceFetchTaskContext;
@@ -115,7 +115,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
         this.topicNamingStrategy =
                 connectorConfig.getTopicNamingStrategy(
                         SqlServerConnectorConfig.TOPIC_NAMING_STRATEGY);
-        EmbeddedFlinkDatabaseHistory.registerHistory(
+        EmbeddedFlinkSchemaHistory.registerHistory(
                 sourceConfig.getDbzConfiguration().getString(SchemaHistory.NAME),
                 sourceSplitBase.getTableSchemas().values());
 
@@ -127,7 +127,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
         String dbName = connectorConfig.getJdbcConfig().getDatabase();
         this.partition = new SqlServerPartition(serverName, dbName);
 
-        validateAndLoadDatabaseHistory(offsetContext, databaseSchema);
+        validateAndLoadSchemaHistory(offsetContext, databaseSchema);
 
         this.taskContext = new SqlServerTaskContext(connectorConfig, databaseSchema);
 
@@ -181,7 +181,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
         return loader.load(offset.getOffset());
     }
 
-    private void validateAndLoadDatabaseHistory(
+    private void validateAndLoadSchemaHistory(
             SqlServerOffsetContext offset, SqlServerDatabaseSchema schema) {
         schema.initializeStorage();
         schema.recover(partition, offset);

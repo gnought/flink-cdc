@@ -38,9 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.debezium.relational.history.TableChanges.TableChange;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.registerHistory;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.removeHistory;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.registerHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.removeHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHistory;
 
 /**
  * The {@link FlinkDatabaseSchemaHistory} only stores the latest schema of the monitored tables.
@@ -48,8 +48,8 @@ import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHi
  * DatabaseSchema}, which doesn't need to replay the history anymore.
  *
  * <p>Considering the data structure maintained in the {@link FlinkDatabaseSchemaHistory} is much
- * different from the {@link FlinkDatabaseHistory}, it's not compatible with the {@link
- * FlinkDatabaseHistory}. Because it only maintains the latest schema of the table rather than all
+ * different from the {@link FlinkSchemaHistory}, it's not compatible with the {@link
+ * FlinkSchemaHistory}. Because it only maintains the latest schema of the table rather than all
  * history DDLs, it's useful to prevent OOM when meet massive history DDLs.
  */
 public class FlinkDatabaseSchemaHistory implements SchemaHistory {
@@ -103,7 +103,7 @@ public class FlinkDatabaseSchemaHistory implements SchemaHistory {
                         "The %s cannot work with 'debezium.internal.implementation' = 'legacy',"
                                 + "please use %s",
                         FlinkDatabaseSchemaHistory.class.getCanonicalName(),
-                        FlinkDatabaseHistory.class.getCanonicalName()));
+                        FlinkSchemaHistory.class.getCanonicalName()));
     }
 
     @Override

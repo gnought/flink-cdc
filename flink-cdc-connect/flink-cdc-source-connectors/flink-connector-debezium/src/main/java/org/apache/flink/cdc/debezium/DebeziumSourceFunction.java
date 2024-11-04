@@ -31,9 +31,9 @@ import org.apache.flink.cdc.debezium.internal.DebeziumChangeConsumer;
 import org.apache.flink.cdc.debezium.internal.DebeziumChangeFetcher;
 import org.apache.flink.cdc.debezium.internal.DebeziumOffset;
 import org.apache.flink.cdc.debezium.internal.DebeziumOffsetSerializer;
-import org.apache.flink.cdc.debezium.internal.FlinkDatabaseHistory;
 import org.apache.flink.cdc.debezium.internal.FlinkDatabaseSchemaHistory;
 import org.apache.flink.cdc.debezium.internal.FlinkOffsetBackingStore;
+import org.apache.flink.cdc.debezium.internal.FlinkSchemaHistory;
 import org.apache.flink.cdc.debezium.internal.Handover;
 import org.apache.flink.cdc.debezium.internal.SchemaRecord;
 import org.apache.flink.configuration.Configuration;
@@ -75,8 +75,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.flink.cdc.debezium.internal.Handover.ClosedException.isGentlyClosedException;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.registerHistory;
-import static org.apache.flink.cdc.debezium.utils.DatabaseHistoryUtil.retrieveHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.registerHistory;
+import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHistory;
 
 /**
  * The {@link DebeziumSourceFunction} is a streaming data source that pulls captured change data
@@ -165,7 +165,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
     /**
      * State to store the history records, i.e. schema changes.
      *
-     * @see FlinkDatabaseHistory
+     * @see FlinkSchemaHistory
      * @see FlinkDatabaseSchemaHistory
      */
     private transient ListState<String> schemaRecordsState;
@@ -178,7 +178,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
     private transient DebeziumEngine<?> engine;
     /**
      * Unique name of this Debezium Engine instance across all the jobs. Currently we randomly
-     * generate a UUID for it. This is used for {@link FlinkDatabaseHistory}.
+     * generate a UUID for it. This is used for {@link FlinkSchemaHistory}.
      */
     private transient String engineInstanceName;
 
@@ -564,12 +564,12 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
         if (FlinkDatabaseSchemaHistory.isCompatible(retrieveHistory(engineInstanceName))) {
             // tries the non-legacy first
             return FlinkDatabaseSchemaHistory.class;
-        } else if (FlinkDatabaseHistory.isCompatible(retrieveHistory(engineInstanceName))) {
+        } else if (FlinkSchemaHistory.isCompatible(retrieveHistory(engineInstanceName))) {
             // fallback to legacy if possible
-            return FlinkDatabaseHistory.class;
+            return FlinkSchemaHistory.class;
         } else {
             // impossible
-            throw new IllegalStateException("Can't determine which DatabaseHistory to use.");
+            throw new IllegalStateException("Can't determine which SchemaHistory to use.");
         }
     }
 
