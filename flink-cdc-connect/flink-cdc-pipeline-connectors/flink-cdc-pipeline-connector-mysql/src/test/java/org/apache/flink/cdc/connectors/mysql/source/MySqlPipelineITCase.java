@@ -61,6 +61,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -123,7 +124,7 @@ public class MySqlPipelineITCase extends MySqlSourceTestBase {
                         .tableList(inventoryDatabase.getDatabaseName() + "\\.products")
                         .startupOptions(StartupOptions.initial())
                         .serverId(getServerId(env.getParallelism()))
-                        .serverTimeZone("UTC")
+                        .serverTimeZone(ZoneId.of("UTC").toString())
                         .includeSchemaChanges(SCHEMA_CHANGE_ENABLED.defaultValue());
 
         FlinkSourceProvider sourceProvider =
@@ -272,7 +273,7 @@ public class MySqlPipelineITCase extends MySqlSourceTestBase {
                         .tableList(inventoryDatabase.getDatabaseName() + "\\.products")
                         .startupOptions(StartupOptions.latest())
                         .serverId(getServerId(env.getParallelism()))
-                        .serverTimeZone("UTC")
+                        .serverTimeZone(ZoneId.of("UTC").toString())
                         .includeSchemaChanges(SCHEMA_CHANGE_ENABLED.defaultValue());
 
         FlinkSourceProvider sourceProvider =
@@ -407,7 +408,7 @@ public class MySqlPipelineITCase extends MySqlSourceTestBase {
                         .tableList(inventoryDatabase.getDatabaseName() + ".*")
                         .startupOptions(StartupOptions.latest())
                         .serverId(getServerId(env.getParallelism()))
-                        .serverTimeZone("UTC")
+                        .serverTimeZone(ZoneId.of("UTC").toString())
                         .includeSchemaChanges(SCHEMA_CHANGE_ENABLED.defaultValue());
 
         FlinkSourceProvider sourceProvider =
@@ -735,7 +736,7 @@ public class MySqlPipelineITCase extends MySqlSourceTestBase {
                         .tableList(inventoryDatabase.getDatabaseName() + ".*")
                         .startupOptions(StartupOptions.specificOffset(logFileName, logPosition))
                         .serverId(getServerId(env.getParallelism()))
-                        .serverTimeZone("UTC")
+                        .serverTimeZone(ZoneId.of("UTC").toString())
                         .includeSchemaChanges(SCHEMA_CHANGE_ENABLED.defaultValue());
 
         FlinkSourceProvider sourceProvider =

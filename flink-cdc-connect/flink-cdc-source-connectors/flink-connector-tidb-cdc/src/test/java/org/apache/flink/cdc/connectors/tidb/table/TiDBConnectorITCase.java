@@ -406,7 +406,8 @@ public class TiDBConnectorITCase extends TiDBTestBase {
     public void testAllDataTypes() throws Throwable {
         try (Connection connection = getJdbcConnection("");
                 Statement statement = connection.createStatement()) {
-            statement.execute(String.format("SET GLOBAL time_zone = '%s';", "UTC"));
+            statement.execute(
+                    String.format("SET GLOBAL time_zone = '%s';", ZoneId.of("UTC").toString()));
         }
         tEnv.getConfig().setLocalTimeZone(ZoneId.of("UTC"));
         initializeTidbTable("column_type_test");

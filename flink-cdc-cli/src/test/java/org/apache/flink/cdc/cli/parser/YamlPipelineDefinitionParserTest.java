@@ -151,7 +151,9 @@ class YamlPipelineDefinitionParserTest {
                         Paths.get(resource.toURI()),
                         Configuration.fromMap(
                                 ImmutableMap.<String, String>builder()
-                                        .put(PIPELINE_LOCAL_TIME_ZONE.key(), "UTC")
+                                        .put(
+                                                PIPELINE_LOCAL_TIME_ZONE.key(),
+                                                ZoneId.of("UTC").toString())
                                         .build()));
         assertThat(pipelineDef.getConfig().get(PIPELINE_LOCAL_TIME_ZONE)).isEqualTo("UTC");
     }

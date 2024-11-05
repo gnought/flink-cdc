@@ -410,7 +410,7 @@ public class NewlyAddedTableITCase extends MySqlSourceTestBase {
                             .hostname(MYSQL_CONTAINER.getHost())
                             .port(MYSQL_CONTAINER.getDatabasePort())
                             .databaseList(customDatabase.getDatabaseName())
-                            .serverTimeZone("UTC")
+                            .serverTimeZone(ZoneId.of("UTC").toString())
                             .tableList(
                                     tableId0,
                                     customDatabase.getDatabaseName()

@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 
 /** Unit tests for the {@link PostTransformOperator}. */
 public class PostTransformOperatorTest {
@@ -641,7 +642,7 @@ public class PostTransformOperatorTest {
                                         + " IF(DATE_FORMAT(CAST(CURRENT_TIMESTAMP AS TIMESTAMP), 'yyyy-MM-dd HH:mm:ss') = DATE_FORMAT(CAST(NOW() AS TIMESTAMP), 'yyyy-MM-dd HH:mm:ss'), 1, 0) as timestamp_equal,"
                                         + " IF(TO_DATE(DATE_FORMAT(LOCALTIMESTAMP, 'yyyy-MM-dd')) = CURRENT_DATE, 1, 0) as date_equal",
                                 "LOCALTIMESTAMP = CAST(CURRENT_TIMESTAMP AS TIMESTAMP)")
-                        .addTimezone("UTC")
+                        .addTimezone(ZoneId.of("UTC").toString())
                         .build();
         EventOperatorTestHarness<PostTransformOperator, Event>
                 transformFunctionEventEventOperatorTestHarness =
@@ -753,7 +754,7 @@ public class PostTransformOperatorTest {
                                 TIMEZONE_TABLEID.identifier(),
                                 "col1, DATE_FORMAT(TO_TIMESTAMP('2024-08-01 00:00:00'), 'yyyy-MM-dd HH:mm:ss') as datetime",
                                 null)
-                        .addTimezone("UTC")
+                        .addTimezone(ZoneId.of("UTC").toString())
                         .build();
         EventOperatorTestHarness<PostTransformOperator, Event>
                 transformFunctionEventEventOperatorTestHarness =
@@ -1567,7 +1568,7 @@ public class PostTransformOperatorTest {
                                 CONDITION_TABLEID.identifier(),
                                 "col1, IF(" + expression + ", true, false) as condition_result",
                                 expression)
-                        .addTimezone("UTC")
+                        .addTimezone(ZoneId.of("UTC").toString())
                         .build();
         EventOperatorTestHarness<PostTransformOperator, Event>
                 transformFunctionEventEventOperatorTestHarness =

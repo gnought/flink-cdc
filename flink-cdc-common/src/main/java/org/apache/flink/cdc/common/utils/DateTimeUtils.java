@@ -85,8 +85,10 @@ public class DateTimeUtils {
     public static int parseDate(String dateStr, String fromFormat) {
         // It is OK to use UTC, we just want get the epoch days
         // TODO  use offset, better performance
-        long ts = internalParseTimestampMillis(dateStr, fromFormat, TimeZone.getTimeZone("UTC"));
         ZoneId zoneId = ZoneId.of("UTC");
+        long ts =
+                internalParseTimestampMillis(
+                        dateStr, fromFormat, TimeZone.getTimeZone(zoneId.toString()));
         Instant instant = Instant.ofEpochMilli(ts);
         ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, zoneId);
         return ymdToUnixDate(zdt.getYear(), zdt.getMonthValue(), zdt.getDayOfMonth());

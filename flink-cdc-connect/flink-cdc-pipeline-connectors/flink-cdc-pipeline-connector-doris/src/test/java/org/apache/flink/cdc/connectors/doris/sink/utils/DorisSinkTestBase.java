@@ -40,6 +40,7 @@ import org.testcontainers.lifecycle.Startables;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +129,8 @@ public class DorisSinkTestBase extends TestLogger {
 
         @Override
         public Configuration getPipelineConfiguration() {
-            return Configuration.fromMap(Collections.singletonMap("local-time-zone", "UTC"));
+            return Configuration.fromMap(
+                    Collections.singletonMap("local-time-zone", ZoneId.of("UTC").toString()));
         }
 
         @Override

@@ -27,6 +27,7 @@ import org.apache.flink.core.memory.DataInputView;
 import org.apache.flink.core.memory.DataOutputView;
 
 import java.io.IOException;
+import java.time.ZoneId;
 
 /**
  * Serializer for {@link ZonedTimestampData}.
@@ -59,7 +60,7 @@ public class ZonedTimestampDataSerializer extends TypeSerializer<ZonedTimestampD
 
     @Override
     public ZonedTimestampData createInstance() {
-        return ZonedTimestampData.of(1, 1, "UTC");
+        return ZonedTimestampData.of(1, 1, ZoneId.of("UTC").toString());
     }
 
     @Override
