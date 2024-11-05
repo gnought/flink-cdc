@@ -23,6 +23,8 @@ import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.cdc.debezium.Validator;
 
 import io.debezium.connector.db2.Db2Connector;
+import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
@@ -57,7 +59,8 @@ public class Db2Source {
 
         public DebeziumSourceFunction<T> build() {
             Properties props = new Properties();
-            props.setProperty("connector.class", Db2Connector.class.getCanonicalName());
+            props.setProperty(
+                    EmbeddedEngine.CONNECTOR_CLASS.name(), Db2Connector.class.getCanonicalName());
             props.setProperty("database.hostname", checkNotNull(hostname));
             props.setProperty("database.port", String.valueOf(port));
             props.setProperty("database.user", checkNotNull(username));
@@ -68,7 +71,9 @@ public class Db2Source {
                     SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
 
             if (tableList != null) {
-                props.setProperty("table.include.list", String.join(",", tableList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                        String.join(",", tableList));
             }
             if (dbzProperties != null) {
                 props.putAll(dbzProperties);

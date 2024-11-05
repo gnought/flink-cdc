@@ -49,13 +49,16 @@ import org.apache.flink.util.FlinkRuntimeException;
 
 import org.apache.flink.shaded.guava31.com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import io.debezium.config.CommonConnectorConfig;
 import io.debezium.document.DocumentReader;
 import io.debezium.document.DocumentWriter;
 import io.debezium.embedded.Connect;
+import io.debezium.embedded.EmbeddedEngine;
 import io.debezium.engine.DebeziumEngine;
 import io.debezium.engine.spi.OffsetCommitPolicy;
 import io.debezium.heartbeat.Heartbeat;
 import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
@@ -362,18 +365,26 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
 
     @Override
     public void run(SourceContext<T> sourceContext) throws Exception {
-        properties.putIfAbsent("name", "engine");
-        properties.setProperty("offset.storage", FlinkOffsetBackingStore.class.getCanonicalName());
+        properties.putIfAbsent(EmbeddedEngine.ENGINE_NAME.name(), "engine");
+        properties.setProperty(
+                EmbeddedEngine.OFFSET_STORAGE.name(),
+                FlinkOffsetBackingStore.class.getCanonicalName());
         if (restoredOffsetState != null) {
             // restored from state
             properties.setProperty(FlinkOffsetBackingStore.OFFSET_STATE_VALUE, restoredOffsetState);
         }
-        // DO NOT include schema change, e.g. DDL
-        properties.putIfAbsent("include.schema.changes", "false");
         // disable the offset flush totally
-        properties.putIfAbsent("offset.flush.interval.ms", String.valueOf(Long.MAX_VALUE));
+        properties.putIfAbsent(
+                DebeziumEngine.OFFSET_FLUSH_INTERVAL_MS_PROP, String.valueOf(Long.MAX_VALUE));
+        // DO NOT include schema change, e.g. DDL
+        properties.putIfAbsent(
+                RelationalDatabaseConnectorConfig.INCLUDE_SCHEMA_CHANGES.name(),
+                String.valueOf(false));
         // disable tombstones
-        properties.setProperty("tombstones.on.delete", "false");
+        properties.setProperty(
+                CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), String.valueOf(false));
+        // disable error max retries on connection error
+        //        properties.setProperty("errors.max.retries", "0");
         if (engineInstanceName == null) {
             // not restore from recovery
             engineInstanceName = UUID.randomUUID().toString();

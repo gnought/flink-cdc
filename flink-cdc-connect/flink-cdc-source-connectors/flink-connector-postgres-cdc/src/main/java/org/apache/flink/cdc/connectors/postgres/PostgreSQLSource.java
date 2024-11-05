@@ -22,6 +22,8 @@ import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.cdc.debezium.Validator;
 
 import io.debezium.connector.postgresql.PostgresConnector;
+import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 
 import java.time.Duration;
 import java.util.Properties;
@@ -150,7 +152,9 @@ public class PostgreSQLSource {
 
         public DebeziumSourceFunction<T> build() {
             Properties props = new Properties();
-            props.setProperty("connector.class", PostgresConnector.class.getCanonicalName());
+            props.setProperty(
+                    EmbeddedEngine.CONNECTOR_CLASS.name(),
+                    PostgresConnector.class.getCanonicalName());
             props.setProperty("plugin.name", pluginName);
             // hard code server name, because we don't need to distinguish it, docs:
             // Logical name that identifies and provides a namespace for the particular PostgreSQL
@@ -169,10 +173,14 @@ public class PostgreSQLSource {
             props.setProperty("heartbeat.interval.ms", String.valueOf(DEFAULT_HEARTBEAT_MS));
 
             if (schemaList != null) {
-                props.setProperty("schema.include.list", String.join(",", schemaList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.SCHEMA_INCLUDE_LIST.name(),
+                        String.join(",", schemaList));
             }
             if (tableList != null) {
-                props.setProperty("table.include.list", String.join(",", tableList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                        String.join(",", tableList));
             }
 
             if (dbzProperties != null) {

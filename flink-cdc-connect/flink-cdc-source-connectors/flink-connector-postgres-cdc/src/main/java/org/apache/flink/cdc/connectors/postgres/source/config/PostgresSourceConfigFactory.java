@@ -22,7 +22,9 @@ import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.postgresql.PostgresConnector;
+import io.debezium.embedded.EmbeddedEngine;
 import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.time.Duration;
@@ -60,7 +62,8 @@ public class PostgresSourceConfigFactory extends JdbcSourceConfigFactory {
     public PostgresSourceConfig create(int subtaskId) {
         checkSupportCheckpointsAfterTasksFinished(closeIdleReaders);
         Properties props = new Properties();
-        props.setProperty("connector.class", PostgresConnector.class.getCanonicalName());
+        props.setProperty(
+                EmbeddedEngine.CONNECTOR_CLASS.name(), PostgresConnector.class.getCanonicalName());
         props.setProperty("plugin.name", pluginName);
         // hard code server name, because we don't need to distinguish it, docs:
         // Logical name that identifies and provides a namespace for the particular PostgreSQL
@@ -90,14 +93,20 @@ public class PostgresSourceConfigFactory extends JdbcSourceConfigFactory {
         // Enable TCP keep-alive probe to verify that the database connection is still alive
         props.setProperty("database.tcpKeepAlive", String.valueOf(true));
         props.setProperty("heartbeat.interval.ms", String.valueOf(heartbeatInterval.toMillis()));
-        props.setProperty("include.schema.changes", String.valueOf(includeSchemaChanges));
+        props.setProperty(
+                RelationalDatabaseConnectorConfig.INCLUDE_SCHEMA_CHANGES.name(),
+                String.valueOf(includeSchemaChanges));
 
         if (schemaList != null) {
-            props.setProperty("schema.include.list", String.join(",", schemaList));
+            props.setProperty(
+                    RelationalDatabaseConnectorConfig.SCHEMA_INCLUDE_LIST.name(),
+                    String.join(",", schemaList));
         }
 
         if (tableList != null) {
-            props.setProperty("table.include.list", String.join(",", tableList));
+            props.setProperty(
+                    RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                    String.join(",", tableList));
         }
 
         // override the user-defined debezium properties

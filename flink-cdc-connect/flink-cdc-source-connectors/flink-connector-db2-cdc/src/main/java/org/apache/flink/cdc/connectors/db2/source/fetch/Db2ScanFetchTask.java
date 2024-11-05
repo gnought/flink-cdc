@@ -37,6 +37,7 @@ import io.debezium.pipeline.source.spi.ChangeEventSource;
 import io.debezium.pipeline.source.spi.SnapshotProgressListener;
 import io.debezium.pipeline.spi.ChangeRecordEmitter;
 import io.debezium.pipeline.spi.SnapshotResult;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.RelationalSnapshotChangeEventSource;
 import io.debezium.relational.SnapshotChangeRecordEmitter;
 import io.debezium.relational.Table;
@@ -119,7 +120,7 @@ public class Db2ScanFetchTask extends AbstractScanFetchTask {
                         .edit()
                         // table.include.list is schema.table format
                         .with(
-                                "table.include.list",
+                                RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST,
                                 new TableId(
                                         null,
                                         snapshotSplit.getTableId().schema(),

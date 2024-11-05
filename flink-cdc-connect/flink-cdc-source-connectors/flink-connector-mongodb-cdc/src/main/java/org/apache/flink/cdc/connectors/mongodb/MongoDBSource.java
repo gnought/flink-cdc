@@ -27,6 +27,7 @@ import com.mongodb.client.model.changestream.FullDocument;
 import com.mongodb.kafka.connect.source.MongoSourceConfig;
 import com.mongodb.kafka.connect.source.MongoSourceConfig.ErrorTolerance;
 import com.mongodb.kafka.connect.source.MongoSourceConfig.OutputFormat;
+import io.debezium.embedded.EmbeddedEngine;
 import io.debezium.heartbeat.Heartbeat;
 
 import java.util.Arrays;
@@ -346,8 +347,9 @@ public class MongoDBSource {
             Properties props = new Properties();
 
             props.setProperty(
-                    "connector.class", MongoDBConnectorSourceConnector.class.getCanonicalName());
-            props.setProperty("name", "mongodb_cdc_source");
+                    EmbeddedEngine.CONNECTOR_CLASS.name(),
+                    MongoDBConnectorSourceConnector.class.getCanonicalName());
+            props.setProperty(EmbeddedEngine.ENGINE_NAME.name(), "mongodb_cdc_source");
 
             props.setProperty(
                     MongoSourceConfig.CONNECTION_URI_CONFIG,
