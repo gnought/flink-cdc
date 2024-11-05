@@ -536,7 +536,7 @@ public class MysqlPipelineNewlyAddedTableITCase extends MySqlSourceTestBase {
         options.put(PORT.key(), String.valueOf(MYSQL_CONTAINER.getDatabasePort()));
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
-        options.put(SERVER_TIME_ZONE.key(), "UTC");
+        options.put(SERVER_TIME_ZONE.key(), ZoneId.of("UTC").toString());
         options.put(TABLES.key(), StringUtils.join(fullTableNames, ","));
         options.put(SERVER_ID.key(), getServerId(parallelism));
         if (enableScanNewlyAddedTable) {

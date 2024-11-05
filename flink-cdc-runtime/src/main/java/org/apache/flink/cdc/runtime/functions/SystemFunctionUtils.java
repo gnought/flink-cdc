@@ -79,7 +79,9 @@ public class SystemFunctionUtils {
 
     public static String dateFormat(TimestampData timestamp, String format) {
         return DateTimeUtils.formatTimestampMillis(
-                timestamp.getMillisecond(), format, TimeZone.getTimeZone("UTC"));
+                timestamp.getMillisecond(),
+                format,
+                TimeZone.getTimeZone(ZoneId.of("UTC").toString()));
     }
 
     public static int toDate(String str, String timezone) {

@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -119,7 +120,7 @@ public class JdbcConnectionPoolTest {
                 username,
                 password,
                 20,
-                "UTC",
+                ZoneId.of("UTC").toString(),
                 Duration.ofSeconds(10),
                 2,
                 3,

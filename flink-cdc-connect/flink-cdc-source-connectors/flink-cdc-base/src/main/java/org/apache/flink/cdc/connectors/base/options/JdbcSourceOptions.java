@@ -22,6 +22,7 @@ import org.apache.flink.configuration.ConfigOption;
 import org.apache.flink.configuration.ConfigOptions;
 
 import java.time.Duration;
+import java.time.ZoneId;
 
 /** Configurations for {@link IncrementalSource} of JDBC data source. */
 public class JdbcSourceOptions extends SourceOptions {
@@ -66,7 +67,7 @@ public class JdbcSourceOptions extends SourceOptions {
     public static final ConfigOption<String> SERVER_TIME_ZONE =
             ConfigOptions.key("server-time-zone")
                     .stringType()
-                    .defaultValue("UTC")
+                    .defaultValue(ZoneId.of("UTC").toString())
                     .withDescription("The session time zone in database server.");
 
     public static final ConfigOption<String> SERVER_ID =

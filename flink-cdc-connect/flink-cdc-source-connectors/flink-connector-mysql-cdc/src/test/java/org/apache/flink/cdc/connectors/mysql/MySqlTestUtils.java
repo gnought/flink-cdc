@@ -41,6 +41,7 @@ import org.apache.flink.util.function.SupplierWithException;
 
 import org.apache.kafka.connect.source.SourceRecord;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalLong;
@@ -67,7 +68,7 @@ public class MySqlTestUtils {
                 .password(database.getPassword())
                 .serverId(5400 + (new Random()).nextInt(1000))
                 .deserializer(new ForwardDeserializeSchema())
-                .serverTimeZone("UTC")
+                .serverTimeZone(ZoneId.of("UTC").toString())
                 .debeziumProperties(new Properties());
     }
 

@@ -25,6 +25,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.time.ZoneId;
+
 /** Example Tests for {@link MySqlSource}. */
 public class MySqlSourceExampleTest extends MySqlSourceTestBase {
 
@@ -45,7 +47,7 @@ public class MySqlSourceExampleTest extends MySqlSourceTestBase {
                         .password(inventoryDatabase.getPassword())
                         .serverId("5401-5404")
                         .deserializer(new JsonDebeziumDeserializationSchema())
-                        .serverTimeZone("UTC")
+                        .serverTimeZone(ZoneId.of("UTC").toString())
                         .includeSchemaChanges(true) // output the schema changes as well
                         .build();
 

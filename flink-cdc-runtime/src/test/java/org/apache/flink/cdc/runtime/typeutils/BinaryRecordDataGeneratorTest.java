@@ -32,6 +32,7 @@ import org.apache.flink.cdc.common.types.ZonedTimestampType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -93,8 +94,8 @@ public class BinaryRecordDataGeneratorTest {
                     TimestampData.fromMillis(200, 0),
                     LocalZonedTimestampData.fromEpochMillis(300, 1),
                     LocalZonedTimestampData.fromEpochMillis(400),
-                    ZonedTimestampData.of(500, 1, "UTC"),
-                    ZonedTimestampData.of(600, 0, "UTC"),
+                    ZonedTimestampData.of(500, 1, ZoneId.of("UTC").toString()),
+                    ZonedTimestampData.of(600, 0, ZoneId.of("UTC").toString()),
                     new BinaryRecordDataGenerator(
                                     RowType.of(DataTypes.STRING(), DataTypes.BIGINT()))
                             .generate(new Object[] {BinaryStringData.fromString("test"), 23L}),
