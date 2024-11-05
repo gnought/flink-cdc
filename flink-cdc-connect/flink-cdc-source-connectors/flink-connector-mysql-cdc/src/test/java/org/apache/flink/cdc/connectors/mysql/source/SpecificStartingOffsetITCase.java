@@ -438,6 +438,7 @@ public class SpecificStartingOffsetITCase {
                 .port(mysql.getDatabasePort())
                 .username(customDatabase.getUsername())
                 .password(customDatabase.getPassword())
+                .serverId("5400-6400")
                 .databaseList(customDatabase.getDatabaseName())
                 .tableList(customers.getTableId())
                 .deserializer(customers.getDeserializer());

@@ -48,7 +48,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -118,7 +117,7 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
             String password,
             ZoneId serverTimeZone,
             Properties dbzProperties,
-            @Nullable String serverId,
+            String serverId,
             boolean enableParallelRead,
             int splitSize,
             int splitMetaGroupSize,
@@ -141,7 +140,7 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
         this.tableName = checkNotNull(tableName);
         this.username = checkNotNull(username);
         this.password = checkNotNull(password);
-        this.serverId = serverId;
+        this.serverId = checkNotNull(serverId);
         this.serverTimeZone = serverTimeZone;
         this.dbzProperties = dbzProperties;
         this.enableParallelRead = enableParallelRead;
@@ -219,7 +218,7 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                             .build();
             return SourceProvider.of(parallelSource);
         } else {
-            org.apache.flink.cdc.connectors.mysql.MySqlSource.Builder<RowData> builder =
+            DebeziumSourceFunction<RowData> sourceFunction =
                     org.apache.flink.cdc.connectors.mysql.MySqlSource.<RowData>builder()
                             .hostname(hostname)
                             .port(port)
@@ -228,12 +227,11 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                             .username(username)
                             .password(password)
                             .serverTimeZone(serverTimeZone.toString())
+                            .serverId(Integer.parseInt(serverId))
                             .debeziumProperties(dbzProperties)
                             .startupOptions(startupOptions)
-                            .deserializer(deserializer);
-            Optional.ofNullable(serverId)
-                    .ifPresent(serverId -> builder.serverId(Integer.parseInt(serverId)));
-            DebeziumSourceFunction<RowData> sourceFunction = builder.build();
+                            .deserializer(deserializer)
+                            .build();
             return SourceFunctionProvider.of(sourceFunction, false);
         }
     }

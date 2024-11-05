@@ -41,6 +41,7 @@ import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOption
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.PORT;
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.SCAN_BINLOG_NEWLY_ADDED_TABLE_ENABLED;
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.SCAN_INCREMENTAL_SNAPSHOT_CHUNK_KEY_COLUMN;
+import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.SERVER_ID;
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.TABLES;
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.TABLES_EXCLUDE;
 import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOptions.USERNAME;
@@ -65,6 +66,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
 
         MySqlDataSourceFactory factory = new MySqlDataSourceFactory();
@@ -82,6 +84,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
         options.put(SCAN_BINLOG_NEWLY_ADDED_TABLE_ENABLED.key(), "true");
         options.put(SCAN_NEWLY_ADDED_TABLE_ENABLED.key(), "true");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
@@ -103,6 +106,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(PASSWORD.key(), TEST_PASSWORD);
         String tables = inventoryDatabase.getDatabaseName() + ".test";
         options.put(TABLES.key(), tables);
+        options.put(SERVER_ID.key(), "5400");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
 
         MySqlDataSourceFactory factory = new MySqlDataSourceFactory();
@@ -120,6 +124,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".\\.*");
+        options.put(SERVER_ID.key(), "5400");
         String tableExclude = inventoryDatabase.getDatabaseName() + ".orders";
         options.put(TABLES_EXCLUDE.key(), tableExclude);
         Factory.Context context = new MockContext(Configuration.fromMap(options));
@@ -144,6 +149,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
         String tableExclude = inventoryDatabase.getDatabaseName() + ".prod\\.*";
         options.put(TABLES_EXCLUDE.key(), tableExclude);
         Factory.Context context = new MockContext(Configuration.fromMap(options));
@@ -182,6 +188,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(
                 TABLES.key(),
                 inventoryDatabase.getDatabaseName() + "." + inventoryDatabase.getDatabaseName());
+        options.put(SERVER_ID.key(), "5400");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
 
         MySqlDataSourceFactory factory = new MySqlDataSourceFactory();
@@ -202,6 +209,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
 
         MySqlDataSourceFactory factory = new MySqlDataSourceFactory();
         List<String> requireKeys =
@@ -232,6 +240,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
         options.put("unsupported_key", "unsupported_value");
 
         MySqlDataSourceFactory factory = new MySqlDataSourceFactory();
@@ -254,6 +263,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
+        options.put(SERVER_ID.key(), "5400");
         options.put("debezium.driver.requireSSL", "true");
         options.put("debezium.snapshot.mode", "initial");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
@@ -273,6 +283,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".\\.*");
+        options.put(SERVER_ID.key(), "5400");
         options.put(
                 SCAN_INCREMENTAL_SNAPSHOT_CHUNK_KEY_COLUMN.key(),
                 inventoryDatabase.getDatabaseName()

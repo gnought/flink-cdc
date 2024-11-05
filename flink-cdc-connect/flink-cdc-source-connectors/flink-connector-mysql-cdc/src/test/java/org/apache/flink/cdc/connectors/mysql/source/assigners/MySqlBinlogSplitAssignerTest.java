@@ -95,6 +95,7 @@ public class MySqlBinlogSplitAssignerTest {
                 .username("jane-doe")
                 .password("password")
                 .serverTimeZone(ZoneId.of("UTC").toString())
+                .serverId("5400-6400")
                 .createConfig(0);
     }
 }

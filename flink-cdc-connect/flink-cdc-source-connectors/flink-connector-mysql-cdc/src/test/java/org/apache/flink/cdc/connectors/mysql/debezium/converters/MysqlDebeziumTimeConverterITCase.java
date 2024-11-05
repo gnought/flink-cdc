@@ -141,6 +141,7 @@ public class MysqlDebeziumTimeConverterITCase {
                         .serverTimeZone(timezone)
                         .username(db.getUsername())
                         .password(db.getPassword())
+                        .serverId("5400-6400")
                         .debeziumProperties(getDebeziumConfigurations(timezone));
         builder.deserializer(new JsonDebeziumDeserializationSchema());
         DataStreamSource<String> convertDataStreamSource =
@@ -190,6 +191,7 @@ public class MysqlDebeziumTimeConverterITCase {
                                 + " 'table-name' = 'date_convert_test',"
                                 + " 'scan.startup.mode' = '%s',"
                                 + " 'server-time-zone' = '%s',"
+                                + " 'server-id' = '5400-5404',"
                                 + " 'debezium.converters' = 'datetime',"
                                 + " 'debezium.datetime.type' = '%s',"
                                 + " 'debezium.database.connectionTimeZone' = '%s',"

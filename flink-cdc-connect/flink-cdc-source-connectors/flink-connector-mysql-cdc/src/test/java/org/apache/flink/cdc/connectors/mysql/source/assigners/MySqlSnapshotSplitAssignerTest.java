@@ -704,6 +704,7 @@ public class MySqlSnapshotSplitAssignerTest extends MySqlSourceTestBase {
                 .username(database.getUsername())
                 .password(database.getPassword())
                 .serverTimeZone(ZoneId.of("UTC").toString())
+                .serverId("5400-6400")
                 .chunkKeyColumn(chunkKeys)
                 .scanNewlyAddedTableEnabled(scanNewlyAddedTableEnabled)
                 .createConfig(0);

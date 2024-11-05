@@ -198,6 +198,7 @@ public class MySqlHybridSplitAssignerTest extends MySqlSourceTestBase {
                 .username(customerDatabase.getUsername())
                 .password(customerDatabase.getPassword())
                 .serverTimeZone(ZoneId.of("UTC").toString())
+                .serverId("5400-6400")
                 .createConfig(0);
     }
 

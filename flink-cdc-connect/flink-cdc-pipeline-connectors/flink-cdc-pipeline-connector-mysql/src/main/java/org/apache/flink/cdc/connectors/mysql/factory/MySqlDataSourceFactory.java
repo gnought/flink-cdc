@@ -86,6 +86,7 @@ import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOption
 import static org.apache.flink.cdc.connectors.mysql.source.utils.ObjectUtils.doubleCompare;
 import static org.apache.flink.cdc.debezium.table.DebeziumOptions.DEBEZIUM_OPTIONS_PREFIX;
 import static org.apache.flink.cdc.debezium.table.DebeziumOptions.getDebeziumProperties;
+import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /** A {@link Factory} to create {@link MySqlDataSource}. */
@@ -379,16 +380,15 @@ public class MySqlDataSourceFactory implements DataSourceFactory {
 
     private String validateAndGetServerId(Configuration configuration) {
         final String serverIdValue = configuration.get(SERVER_ID);
-        if (serverIdValue != null) {
-            // validation
-            try {
-                ServerIdRange.from(serverIdValue);
-            } catch (Exception e) {
-                throw new ValidationException(
-                        String.format(
-                                "The value of option 'server-id' is invalid: '%s'", serverIdValue),
-                        e);
-            }
+        // validation
+        checkNotNull(serverIdValue);
+        try {
+            ServerIdRange.from(serverIdValue);
+        } catch (Exception e) {
+            throw new ValidationException(
+                    String.format(
+                            "The value of option 'server-id' is invalid: '%s'", serverIdValue),
+                    e);
         }
         return serverIdValue;
     }

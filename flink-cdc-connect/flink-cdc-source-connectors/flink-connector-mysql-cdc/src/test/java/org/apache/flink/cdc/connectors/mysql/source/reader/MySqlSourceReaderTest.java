@@ -413,6 +413,7 @@ public class MySqlSourceReaderTest extends MySqlSourceTestBase {
                         .username(customerDatabase.getUsername())
                         .password(customerDatabase.getPassword())
                         .serverTimeZone(ZoneId.of("UTC").toString())
+                        .serverId("5400-6400")
                         .createConfig(0);
         final MySqlSnapshotSplitAssigner assigner =
                 new MySqlSnapshotSplitAssigner(
@@ -443,6 +444,7 @@ public class MySqlSourceReaderTest extends MySqlSourceTestBase {
                         .username(customerDatabase.getUsername())
                         .password(customerDatabase.getPassword())
                         .serverTimeZone(ZoneId.of("UTC").toString())
+                        .serverId("5400-6400")
                         .createConfig(0);
         MySqlSourceReader<SourceRecord> reader = createReader(sourceConfig4Reader, 1);
         reader.start();
@@ -468,6 +470,7 @@ public class MySqlSourceReaderTest extends MySqlSourceTestBase {
                         .username(customerDatabase.getUsername())
                         .password(customerDatabase.getPassword())
                         .serverTimeZone(ZoneId.of("UTC").toString())
+                        .serverId("5400-6400")
                         .createConfig(0);
         final MySqlSnapshotSplitAssigner assigner =
                 new MySqlSnapshotSplitAssigner(
@@ -641,6 +644,7 @@ public class MySqlSourceReaderTest extends MySqlSourceTestBase {
                 .fetchSize(2)
                 .username(customerDatabase.getUsername())
                 .password(customerDatabase.getPassword())
+                .serverId("5400-6400")
                 .serverTimeZone(ZoneId.of("UTC").toString())
                 .createConfig(0);
     }

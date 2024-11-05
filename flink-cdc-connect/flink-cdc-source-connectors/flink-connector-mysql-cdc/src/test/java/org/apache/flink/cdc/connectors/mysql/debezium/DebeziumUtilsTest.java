@@ -80,6 +80,7 @@ public class DebeziumUtilsTest {
                 .connectTimeout(Duration.ofSeconds(20))
                 .username("fakeUser")
                 .password("fakePw")
+                .serverId("5400-6400")
                 .serverTimeZone(ZoneId.of("UTC").toString())
                 .debeziumProperties(dbzProperties)
                 .createConfig(0);

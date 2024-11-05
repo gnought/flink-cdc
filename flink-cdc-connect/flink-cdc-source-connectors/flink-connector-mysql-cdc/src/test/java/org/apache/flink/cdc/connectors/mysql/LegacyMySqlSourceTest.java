@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -1033,6 +1034,7 @@ public class LegacyMySqlSourceTest extends LegacyMySqlTestBase {
                         .username(container.getUsername())
                         .password(container.getPassword())
                         .deserializer(new MySqlTestUtils.ForwardDeserializeSchema())
+                        .serverId(5400 + (new Random()).nextInt(1000))
                         .debeziumProperties(new Properties())
                         .build();
         final TestingListState<byte[]> offsetState = new TestingListState<>();
