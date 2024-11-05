@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import static org.junit.Assert.assertTrue;
 
@@ -91,6 +92,7 @@ public class LegacyMySqlSourceITCase extends LegacyMySqlTestBase {
                         .databaseList(fullTypesDatabase.getDatabaseName())
                         .username(fullTypesDatabase.getUsername())
                         .password(fullTypesDatabase.getPassword())
+                        .serverId(5400 + (new Random()).nextInt(1000))
                         .deserializer(schema)
                         .build();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

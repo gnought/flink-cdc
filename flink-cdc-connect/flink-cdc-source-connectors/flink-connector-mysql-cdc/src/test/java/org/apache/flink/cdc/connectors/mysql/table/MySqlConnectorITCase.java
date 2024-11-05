@@ -1779,6 +1779,7 @@ public class MySqlConnectorITCase extends MySqlSourceTestBase {
                                             .databaseList(inventoryDatabase.getDatabaseName())
                                             .tableList("products")
                                             .serverTimeZone(ZoneId.of("UTC").toString())
+                                            .serverId("5400-6400")
                                             .createConfig(0)));
         }
 

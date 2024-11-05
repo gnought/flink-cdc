@@ -83,8 +83,7 @@ public class MySqlDataSourceOptions {
                                     + "'scan.incremental.snapshot.enabled' enabled. Every ID must be unique across all "
                                     + "currently-running database processes in the MySQL cluster. This connector"
                                     + " joins the MySQL  cluster as another server (with this unique ID) "
-                                    + "so it can read the binlog. By default, a random number is generated between"
-                                    + " 5400 and 6400, though we recommend setting an explicit value.");
+                                    + "so it can read the binlog.");
 
     public static final ConfigOption<Integer> SCAN_INCREMENTAL_SNAPSHOT_CHUNK_SIZE =
             ConfigOptions.key("scan.incremental.snapshot.chunk.size")

@@ -128,8 +128,7 @@ public class MySqlSource {
         /**
          * A numeric ID of this database client, which must be unique across all currently-running
          * database processes in the MySQL cluster. This connector joins the MySQL database cluster
-         * as another server (with this unique ID) so it can read the binlog. By default, a random
-         * number is generated between 5400 and 6400, though we recommend setting an explicit value.
+         * as another server (with this unique ID) so it can read the binlog.
          */
         public Builder<T> serverId(int serverId) {
             this.serverId = serverId;

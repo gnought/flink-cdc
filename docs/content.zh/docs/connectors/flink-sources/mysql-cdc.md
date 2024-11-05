@@ -677,6 +677,7 @@ public class MySqlSourceExample {
         .tableList("yourDatabaseName.yourTableName") // 设置捕获的表
         .username("yourUsername")
         .password("yourPassword")
+        .serverId("5401-5404")
         .deserializer(new JsonDebeziumDeserializationSchema()) // 将 SourceRecord 转换为 JSON 字符串
         .build();
 

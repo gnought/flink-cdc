@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
 
 import static org.apache.flink.cdc.debezium.table.DebeziumOptions.getDebeziumProperties;
 import static org.apache.flink.cdc.debezium.utils.ResolvedSchemaUtils.getPhysicalSchema;
+import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /** Factory for creating configured instance of {@link MySqlTableSource}. */
@@ -294,16 +295,15 @@ public class MySqlTableSourceFactory implements DynamicTableSourceFactory {
 
     private String validateAndGetServerId(ReadableConfig configuration) {
         final String serverIdValue = configuration.get(MySqlSourceOptions.SERVER_ID);
-        if (serverIdValue != null) {
-            // validation
-            try {
-                ServerIdRange.from(serverIdValue);
-            } catch (Exception e) {
-                throw new ValidationException(
-                        String.format(
-                                "The value of option 'server-id' is invalid: '%s'", serverIdValue),
-                        e);
-            }
+        checkNotNull(serverIdValue);
+        // validation
+        try {
+            ServerIdRange.from(serverIdValue);
+        } catch (Exception e) {
+            throw new ValidationException(
+                    String.format(
+                            "The value of option 'server-id' is invalid: '%s'", serverIdValue),
+                    e);
         }
         return serverIdValue;
     }

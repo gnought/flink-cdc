@@ -185,6 +185,7 @@ public class MySqlValidatorTest {
                             .tableList(database.getDatabaseName() + ".products")
                             .deserializer(new MySqlTestUtils.ForwardDeserializeSchema())
                             .serverTimeZone("UTC")
+                            .serverId("5400-6400")
                             .build();
             try (SplitEnumerator<MySqlSplit, PendingSplitsState> enumerator =
                     mySqlSource.createEnumerator(new MockSplitEnumeratorContext<>(1))) {

@@ -247,6 +247,7 @@ public class CdcTest {
                 .tableList("yourDatabaseName.yourTableName") // set captured table
                 .username("yourUsername")
                 .password("yourPassword")
+                .serverId("5401-5404")
                 .deserializer(new JsonDebeziumDeserializationSchema()) // converts SourceRecord to JSON String
                 .build();
 

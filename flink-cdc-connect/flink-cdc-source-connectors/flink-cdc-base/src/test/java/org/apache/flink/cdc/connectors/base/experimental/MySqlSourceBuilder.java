@@ -105,9 +105,7 @@ public class MySqlSourceBuilder<T> {
      * '5400', the numeric ID range syntax is like '5400-5408', The numeric ID range syntax is
      * required when 'scan.incremental.snapshot.enabled' enabled. Every ID must be unique across all
      * currently-running database processes in the MySQL cluster. This connector joins the MySQL
-     * cluster as another server (with this unique ID) so it can read the binlog. By default, a
-     * random number is generated between 5400 and 6400, though we recommend setting an explicit
-     * value."
+     * cluster as another server (with this unique ID) so it can read the binlog.
      */
     public MySqlSourceBuilder<T> serverId(String serverId) {
         this.configFactory.serverId(serverId);

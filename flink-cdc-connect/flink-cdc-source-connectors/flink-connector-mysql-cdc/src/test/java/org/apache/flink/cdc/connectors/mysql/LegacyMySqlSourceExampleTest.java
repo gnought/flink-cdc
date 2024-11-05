@@ -25,6 +25,8 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Random;
+
 /** Example Tests for the legacy {@link MySqlSource}. */
 public class LegacyMySqlSourceExampleTest extends LegacyMySqlTestBase {
 
@@ -43,6 +45,7 @@ public class LegacyMySqlSourceExampleTest extends LegacyMySqlTestBase {
                         .databaseList(inventoryDatabase.getDatabaseName())
                         .username(inventoryDatabase.getUsername())
                         .password(inventoryDatabase.getPassword())
+                        .serverId(5400 + (new Random()).nextInt(1000))
                         .deserializer(new StringDebeziumDeserializationSchema())
                         .build();
 

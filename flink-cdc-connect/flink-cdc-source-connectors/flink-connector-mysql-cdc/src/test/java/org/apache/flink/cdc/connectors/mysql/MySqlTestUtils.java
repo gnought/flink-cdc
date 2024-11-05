@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalLong;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +66,7 @@ public class MySqlTestUtils {
                         database.getDatabaseName() + "." + "products") // monitor table "products"
                 .username(database.getUsername())
                 .password(database.getPassword())
+                .serverId(5400 + (new Random()).nextInt(1000))
                 .deserializer(new ForwardDeserializeSchema())
                 .serverTimeZone(serverTimezone)
                 .debeziumProperties(new Properties());

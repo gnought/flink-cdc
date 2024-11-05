@@ -418,7 +418,7 @@ public class NewlyAddedTableITCase extends MySqlSourceTestBase {
                                             + (i == 0 ? tableId1 : tableId2))
                             .username(customDatabase.getUsername())
                             .password(customDatabase.getPassword())
-                            .serverId("5401-5404")
+                            .serverId(getServerId())
                             .deserializer(deserializer)
                             .scanNewlyAddedTableEnabled(true)
                             .build();

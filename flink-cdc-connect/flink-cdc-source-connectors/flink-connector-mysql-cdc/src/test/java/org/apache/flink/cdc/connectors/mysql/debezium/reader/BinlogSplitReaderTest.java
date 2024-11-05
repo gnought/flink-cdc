@@ -1234,9 +1234,10 @@ public class BinlogSplitReaderTest extends MySqlSourceTestBase {
                 .hostname(container.getHost())
                 .port(container.getDatabasePort())
                 .username(database.getUsername())
+                .password(database.getPassword())
+                .serverId("5400-6400")
                 .splitSize(4)
-                .fetchSize(2)
-                .password(database.getPassword());
+                .fetchSize(2);
     }
 
     private void addColumnToTable(JdbcConnection connection, String tableId) throws Exception {

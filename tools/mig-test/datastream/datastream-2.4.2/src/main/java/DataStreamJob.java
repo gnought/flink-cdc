@@ -32,6 +32,7 @@ public class DataStreamJob {
                 .startupOptions(StartupOptions.initial())
                 .username("root")
                 .password("")
+                .serverId("5400-6400")
                 .deserializer(new JsonDebeziumDeserializationSchema())
                 .serverTimeZone("UTC")
                 .build();

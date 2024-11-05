@@ -595,6 +595,7 @@ public class MySqlSourceITCase extends MySqlSourceTestBase {
                         .username(customDatabase.getUsername())
                         .password(customDatabase.getPassword())
                         .serverTimeZone(ZoneId.of("UTC").toString())
+                        .serverId(getServerId())
                         .databaseList(customDatabase.getDatabaseName())
                         .tableList(customerTable.getTableId())
                         .deserializer(customerTable.getDeserializer())
@@ -680,7 +681,7 @@ public class MySqlSourceITCase extends MySqlSourceTestBase {
                         .tableList(tableId)
                         .username(customDatabase.getUsername())
                         .password(customDatabase.getPassword())
-                        .serverId("5401-5404")
+                        .serverId(getServerId())
                         .deserializer(deserializer)
                         .startupOptions(startupOptions)
                         .chunkKeyColumn(
