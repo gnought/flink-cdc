@@ -54,6 +54,7 @@ import io.debezium.pipeline.metrics.SnapshotChangeEventSourceMetrics;
 import io.debezium.pipeline.metrics.spi.ChangeEventSourceMetricsFactory;
 import io.debezium.pipeline.source.spi.EventMetadataProvider;
 import io.debezium.relational.Column;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.Table;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
@@ -128,7 +129,7 @@ public class PostgresSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                                     .getConfig()
                                     .edit()
                                     .with(
-                                            "table.include.list",
+                                            RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST,
                                             ((SnapshotSplit) sourceSplitBase)
                                                     .getTableId()
                                                     .toString())

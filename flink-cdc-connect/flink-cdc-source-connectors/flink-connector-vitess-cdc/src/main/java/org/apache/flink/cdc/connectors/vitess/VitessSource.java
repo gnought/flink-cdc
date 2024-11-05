@@ -23,6 +23,7 @@ import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 
 import io.debezium.connector.vitess.VitessConnector;
+import io.debezium.embedded.EmbeddedEngine;
 
 import java.util.Properties;
 
@@ -256,7 +257,9 @@ public class VitessSource {
 
         public DebeziumSourceFunction<T> build() {
             Properties props = new Properties();
-            props.setProperty("connector.class", VitessConnector.class.getCanonicalName());
+            props.setProperty(
+                    EmbeddedEngine.CONNECTOR_CLASS.name(),
+                    VitessConnector.class.getCanonicalName());
             props.setProperty("plugin.name", pluginName);
             props.setProperty("name", name);
             // hard code server name, because we don't need to distinguish it, docs:

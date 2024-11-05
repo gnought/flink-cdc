@@ -23,7 +23,11 @@ import org.apache.flink.cdc.connectors.mysql.source.MySqlSource;
 import org.apache.flink.cdc.connectors.mysql.table.StartupOptions;
 import org.apache.flink.table.catalog.ObjectPath;
 
+import io.debezium.config.CommonConnectorConfig;
+import io.debezium.connector.mysql.MySqlConnectorConfig;
+import io.debezium.engine.DebeziumEngine;
 import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.io.Serializable;
@@ -321,30 +325,41 @@ public class MySqlSourceConfigFactory implements Serializable {
         props.setProperty(
                 SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
         props.setProperty("schema.history.refer.ddl", String.valueOf(true));
-        props.setProperty("connect.timeout.ms", String.valueOf(connectTimeout.toMillis()));
+        props.setProperty(
+                MySqlConnectorConfig.CONNECTION_TIMEOUT_MS.name(),
+                String.valueOf(connectTimeout.toMillis()));
         // the underlying debezium reader should always capture the schema changes and forward them.
         // Note: the includeSchemaChanges parameter is used to control emitting the schema record,
         // only DataStream API program need to emit the schema record, the Table API need not
-        props.setProperty("include.schema.changes", String.valueOf(true));
+        props.setProperty(
+                RelationalDatabaseConnectorConfig.INCLUDE_SCHEMA_CHANGES.name(),
+                String.valueOf(true));
         // disable the offset flush totally
-        props.setProperty("offset.flush.interval.ms", String.valueOf(Long.MAX_VALUE));
+        props.setProperty(
+                DebeziumEngine.OFFSET_FLUSH_INTERVAL_MS_PROP, String.valueOf(Long.MAX_VALUE));
         // disable tombstones
-        props.setProperty("tombstones.on.delete", String.valueOf(false));
+        props.setProperty(CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), String.valueOf(false));
         props.setProperty("heartbeat.interval.ms", String.valueOf(heartbeatInterval.toMillis()));
         // debezium use "long" mode to handle unsigned bigint by default,
         // but it'll cause lose of precise when the value is larger than 2^63,
         // so use "precise" mode to avoid it.
-        props.put("bigint.unsigned.handling.mode", "precise");
+        props.put(
+                MySqlConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE.name(),
+                MySqlConnectorConfig.BigIntUnsignedHandlingMode.PRECISE.getValue());
 
         if (serverIdRange != null) {
             int serverId = serverIdRange.getServerId(subtaskId);
-            props.setProperty("database.server.id", String.valueOf(serverId));
+            props.setProperty(MySqlConnectorConfig.SERVER_ID.name(), String.valueOf(serverId));
         }
         if (databaseList != null) {
-            props.setProperty("database.include.list", String.join(",", databaseList));
+            props.setProperty(
+                    RelationalDatabaseConnectorConfig.DATABASE_INCLUDE_LIST.name(),
+                    String.join(",", databaseList));
         }
         if (tableList != null) {
-            props.setProperty("table.include.list", String.join(",", tableList));
+            props.setProperty(
+                    RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                    String.join(",", tableList));
         }
         if (serverTimeZone != null) {
             props.setProperty("database.connectionTimeZone", serverTimeZone);

@@ -22,7 +22,9 @@ import org.apache.flink.cdc.connectors.base.source.EmbeddedFlinkSchemaHistory;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.sqlserver.SqlServerConnector;
+import io.debezium.embedded.EmbeddedEngine;
 import io.debezium.relational.HistorizedRelationalDatabaseConnectorConfig;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.util.Properties;
@@ -42,7 +44,8 @@ public class SqlServerSourceConfigFactory extends JdbcSourceConfigFactory {
     public SqlServerSourceConfig create(int subtask) {
         checkSupportCheckpointsAfterTasksFinished(closeIdleReaders);
         Properties props = new Properties();
-        props.setProperty("connector.class", SqlServerConnector.class.getCanonicalName());
+        props.setProperty(
+                EmbeddedEngine.CONNECTOR_CLASS.name(), SqlServerConnector.class.getCanonicalName());
 
         // set database schema history impl to flink database schema history
         props.setProperty(
@@ -66,7 +69,9 @@ public class SqlServerSourceConfigFactory extends JdbcSourceConfigFactory {
         props.setProperty("database.dbname", checkNotNull(databaseList.get(0)));
 
         if (tableList != null) {
-            props.setProperty("table.include.list", String.join(",", tableList));
+            props.setProperty(
+                    RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                    String.join(",", tableList));
         }
 
         switch (startupOptions.startupMode) {

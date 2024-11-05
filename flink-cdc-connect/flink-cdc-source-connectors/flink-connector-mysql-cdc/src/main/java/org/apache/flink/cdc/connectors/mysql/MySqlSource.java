@@ -17,13 +17,17 @@
 
 package org.apache.flink.cdc.connectors.mysql;
 
+import org.apache.flink.cdc.connectors.mysql.source.offset.BinlogOffset;
 import org.apache.flink.cdc.connectors.mysql.table.StartupOptions;
 import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.cdc.debezium.internal.DebeziumOffset;
 
 import io.debezium.connector.mysql.MySqlConnector;
+import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.connector.mysql.MySqlPartition;
+import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import java.util.HashMap;
@@ -159,7 +163,8 @@ public class MySqlSource {
 
         public DebeziumSourceFunction<T> build() {
             Properties props = new Properties();
-            props.setProperty("connector.class", MySqlConnector.class.getCanonicalName());
+            props.setProperty(
+                    EmbeddedEngine.CONNECTOR_CLASS.name(), MySqlConnector.class.getCanonicalName());
             // hard code server name, because we don't need to distinguish it, docs:
             // Logical name that identifies and provides a namespace for the particular MySQL
             // database
@@ -177,16 +182,22 @@ public class MySqlSource {
             // debezium use "long" mode to handle unsigned bigint by default,
             // but it'll cause lose of precise when the value is larger than 2^63,
             // so use "precise" mode to avoid it.
-            props.put("bigint.unsigned.handling.mode", "precise");
+            props.put(
+                    MySqlConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE.name(),
+                    MySqlConnectorConfig.BigIntUnsignedHandlingMode.PRECISE.getValue());
 
             if (serverId != null) {
-                props.setProperty("database.server.id", String.valueOf(serverId));
+                props.setProperty(MySqlConnectorConfig.SERVER_ID.name(), String.valueOf(serverId));
             }
             if (databaseList != null) {
-                props.setProperty("database.include.list", String.join(",", databaseList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.DATABASE_INCLUDE_LIST.name(),
+                        String.join(",", databaseList));
             }
             if (tableList != null) {
-                props.setProperty("table.include.list", String.join(",", tableList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                        String.join(",", tableList));
             }
             if (serverTimeZone != null) {
                 props.setProperty("database.connectionTimeZone", serverTimeZone);
@@ -195,36 +206,50 @@ public class MySqlSource {
             DebeziumOffset specificOffset = null;
             switch (startupOptions.startupMode) {
                 case INITIAL:
-                    props.setProperty("snapshot.mode", "initial");
+                    props.setProperty(
+                            MySqlConnectorConfig.SNAPSHOT_MODE.name(),
+                            MySqlConnectorConfig.SnapshotMode.INITIAL.getValue());
                     break;
 
                 case EARLIEST_OFFSET:
-                    props.setProperty("snapshot.mode", "never");
+                    props.setProperty(
+                            MySqlConnectorConfig.SNAPSHOT_MODE.name(),
+                            MySqlConnectorConfig.SnapshotMode.NEVER.getValue());
                     break;
 
                 case LATEST_OFFSET:
-                    props.setProperty("snapshot.mode", "schema_only");
+                    props.setProperty(
+                            MySqlConnectorConfig.SNAPSHOT_MODE.name(),
+                            MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY.getValue());
                     break;
 
                 case SPECIFIC_OFFSETS:
                     // if binlog offset is specified, 'snapshot.mode=schema_only_recovery' must
                     // be configured. It only snapshots the schemas, not the data,
                     // and continue binlog reading from the specified offset
-                    props.setProperty("snapshot.mode", "schema_only_recovery");
+                    props.setProperty(
+                            MySqlConnectorConfig.SNAPSHOT_MODE.name(),
+                            MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY_RECOVERY.getValue());
 
                     specificOffset = new DebeziumOffset();
                     MySqlPartition partition = new MySqlPartition(DATABASE_SERVER_NAME, "");
                     specificOffset.setSourcePartition(partition.getSourcePartition());
 
                     Map<String, Object> sourceOffset = new HashMap<>();
-                    sourceOffset.put("file", startupOptions.binlogOffset.getFilename());
-                    sourceOffset.put("pos", startupOptions.binlogOffset.getPosition());
+                    sourceOffset.put(
+                            BinlogOffset.BINLOG_FILENAME_OFFSET_KEY,
+                            startupOptions.binlogOffset.getFilename());
+                    sourceOffset.put(
+                            BinlogOffset.BINLOG_POSITION_OFFSET_KEY,
+                            startupOptions.binlogOffset.getPosition());
                     specificOffset.setSourceOffset(sourceOffset);
                     break;
 
                 case TIMESTAMP:
                     checkNotNull(deserializer);
-                    props.setProperty("snapshot.mode", "never");
+                    props.setProperty(
+                            MySqlConnectorConfig.SNAPSHOT_MODE.name(),
+                            MySqlConnectorConfig.SnapshotMode.NEVER.getValue());
                     deserializer =
                             new SeekBinlogToTimestampFilter<>(
                                     startupOptions.binlogOffset.getTimestampSec() * 1000,

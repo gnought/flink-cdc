@@ -22,6 +22,8 @@ import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
 import org.apache.flink.cdc.debezium.DebeziumSourceFunction;
 
 import io.debezium.connector.oracle.OracleConnector;
+import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.SchemaHistory;
 
 import javax.annotation.Nullable;
@@ -140,7 +142,9 @@ public class OracleSource {
 
         public DebeziumSourceFunction<T> build() {
             Properties props = new Properties();
-            props.setProperty("connector.class", OracleConnector.class.getCanonicalName());
+            props.setProperty(
+                    EmbeddedEngine.CONNECTOR_CLASS.name(),
+                    OracleConnector.class.getCanonicalName());
             // Logical name that identifies and provides a namespace for the particular Oracle
             // database server being
             // monitored. The logical name should be unique across all other connectors, since it is
@@ -165,10 +169,14 @@ public class OracleSource {
                     SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS.name(), String.valueOf(true));
             props.setProperty("database.dbname", checkNotNull(database));
             if (schemaList != null) {
-                props.setProperty("schema.include.list", String.join(",", schemaList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.SCHEMA_INCLUDE_LIST.name(),
+                        String.join(",", schemaList));
             }
             if (tableList != null) {
-                props.setProperty("table.include.list", String.join(",", tableList));
+                props.setProperty(
+                        RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST.name(),
+                        String.join(",", tableList));
             }
             // we need this in order not to lose any transaction during snapshot to streaming switch
             props.setProperty("internal.log.mining.transaction.snapshot.boundary.mode", "all");

@@ -43,6 +43,7 @@ import io.debezium.heartbeat.Heartbeat;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.source.spi.ChangeEventSource;
 import io.debezium.pipeline.spi.SnapshotResult;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.util.SchemaNameAdjuster;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -224,7 +225,9 @@ public class SnapshotSplitReader implements DebeziumReader<SourceRecords, MySqlS
                         .getSourceConfig()
                         .getDbzConfiguration()
                         .edit()
-                        .with("table.include.list", currentSnapshotSplit.getTableId().toString())
+                        .with(
+                                RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST,
+                                currentSnapshotSplit.getTableId().toString())
                         // Disable heartbeat event in snapshot split reader
                         .with(Heartbeat.HEARTBEAT_INTERVAL, 0)
                         .build();

@@ -38,6 +38,7 @@ import io.debezium.pipeline.source.spi.ChangeEventSource;
 import io.debezium.pipeline.source.spi.SnapshotProgressListener;
 import io.debezium.pipeline.spi.ChangeRecordEmitter;
 import io.debezium.pipeline.spi.SnapshotResult;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.RelationalSnapshotChangeEventSource;
 import io.debezium.relational.SnapshotChangeRecordEmitter;
 import io.debezium.relational.Table;
@@ -112,7 +113,9 @@ public class MySqlScanFetchTask extends AbstractScanFetchTask {
                 context.getSourceConfig()
                         .getDbzConfiguration()
                         .edit()
-                        .with("table.include.list", snapshotSplit.getTableId().toString())
+                        .with(
+                                RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST,
+                                snapshotSplit.getTableId().toString())
                         // Disable heartbeat event in snapshot split fetcher
                         .with(Heartbeat.HEARTBEAT_INTERVAL, 0)
                         .build();
