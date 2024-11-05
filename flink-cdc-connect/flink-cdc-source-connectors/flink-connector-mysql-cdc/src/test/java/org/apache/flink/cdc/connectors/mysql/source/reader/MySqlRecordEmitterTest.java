@@ -31,10 +31,8 @@ import org.apache.flink.util.Collector;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.heartbeat.Heartbeat;
-import io.debezium.heartbeat.HeartbeatFactory;
 import io.debezium.jdbc.JdbcConfiguration;
 import io.debezium.schema.DefaultTopicNamingStrategy;
-import io.debezium.spi.schema.DataCollectionId;
 import io.debezium.util.SchemaNameAdjuster;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.Test;
@@ -59,12 +57,12 @@ public class MySqlRecordEmitterTest {
                         .build();
 
         MySqlConnectorConfig mySqlConfig = new MySqlConnectorConfig(dezConf);
-        HeartbeatFactory<DataCollectionId> heartbeatFactory =
-                new HeartbeatFactory<>(
-                        new MySqlConnectorConfig(dezConf),
+        Heartbeat heartbeat =
+                mySqlConfig.createHeartbeat(
                         DefaultTopicNamingStrategy.create(mySqlConfig),
-                        SchemaNameAdjuster.create());
-        Heartbeat heartbeat = heartbeatFactory.createHeartbeat();
+                        SchemaNameAdjuster.create(),
+                        null,
+                        null);
         BinlogOffset fakeOffset = BinlogOffset.ofBinlogFilePosition("fake-file", 15213L);
         MySqlRecordEmitter<Void> recordEmitter = createRecordEmitter();
         MySqlBinlogSplitState splitState = createBinlogSplitState();
