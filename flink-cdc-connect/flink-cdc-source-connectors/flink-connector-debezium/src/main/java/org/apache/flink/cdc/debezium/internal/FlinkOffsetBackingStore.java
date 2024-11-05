@@ -45,6 +45,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.apache.kafka.connect.json.JsonConverterConfig.SCHEMAS_ENABLE_CONFIG;
+
 /**
  * A implementation of {@link OffsetBackingStore} backed on Flink's state mechanism.
  *
@@ -71,7 +73,7 @@ public class FlinkOffsetBackingStore implements OffsetBackingStore {
         // eagerly initialize the executor, because OffsetStorageWriter will use it later
         start();
 
-        Map<String, ?> conf = config.originals();
+        final Map<String, ?> conf = config.originals();
         if (!conf.containsKey(OFFSET_STATE_VALUE)) {
             // a normal startup from clean state, not need to initialize the offset
             return;
@@ -88,12 +90,15 @@ public class FlinkOffsetBackingStore implements OffsetBackingStore {
         }
 
         String engineName = (String) conf.get(EmbeddedEngine.ENGINE_NAME.name());
+
+        /** match internalConverterConfig in {@link EmbeddedEngine} */
+        Map<String, Object> internalConverterConfig = new HashMap<>(conf);
+        internalConverterConfig.put(SCHEMAS_ENABLE_CONFIG, false);
         Converter keyConverter = new JsonConverter();
         Converter valueConverter = new JsonConverter();
-        keyConverter.configure(config.originals(), true);
-        Map<String, Object> valueConfigs = new HashMap<>(conf);
-        valueConfigs.put("schemas.enable", false);
-        valueConverter.configure(valueConfigs, true);
+        keyConverter.configure(internalConverterConfig, true);
+        valueConverter.configure(internalConverterConfig, false);
+
         OffsetStorageWriter offsetWriter =
                 new OffsetStorageWriter(
                         this,
