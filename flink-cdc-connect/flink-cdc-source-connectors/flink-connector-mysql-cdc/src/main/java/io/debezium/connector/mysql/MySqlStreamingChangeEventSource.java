@@ -94,9 +94,7 @@ import static io.debezium.util.Strings.isNullOrEmpty;
  *
  * <p>Line 1540 : Add more error details for some exceptions.
  */
-/**
- * @author Jiri Pechanec
- */
+/** @author Jiri Pechanec */
 public class MySqlStreamingChangeEventSource
         implements StreamingChangeEventSource<MySqlPartition, MySqlOffsetContext> {
 
