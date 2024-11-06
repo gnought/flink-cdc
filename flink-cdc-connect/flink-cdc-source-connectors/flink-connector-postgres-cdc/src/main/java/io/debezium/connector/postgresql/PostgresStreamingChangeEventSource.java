@@ -34,9 +34,7 @@ import java.util.Objects;
 import java.util.OptionalLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author Horia Chiorean (hchiorea@redhat.com), Jiri Pechanec
- */
+/** @author Horia Chiorean (hchiorea@redhat.com), Jiri Pechanec */
 /**
  * Copied from Debezium 2.0.1.final
  *

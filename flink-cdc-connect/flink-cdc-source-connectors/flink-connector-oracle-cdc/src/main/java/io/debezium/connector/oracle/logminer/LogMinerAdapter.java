@@ -52,9 +52,7 @@ import java.util.stream.Collectors;
  * <p>Line 342: Replace < condition with <= to be able to catch ongoing transactions during snapshot
  * if current SCN points to START/INSERT/DELETE/UPDATE event.
  */
-/**
- * @author Chris Cranford
- */
+/** @author Chris Cranford */
 public class LogMinerAdapter extends AbstractStreamingAdapter {
 
     private static final Duration GET_TRANSACTION_SCN_PAUSE = Duration.ofSeconds(1);
