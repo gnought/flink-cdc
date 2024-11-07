@@ -23,11 +23,11 @@ import org.apache.flink.cdc.connectors.base.source.meta.split.FinishedSnapshotSp
 import org.apache.flink.cdc.connectors.base.source.meta.split.SnapshotSplit;
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitBase;
 import org.apache.flink.cdc.connectors.base.utils.SerializerUtils;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.core.memory.DataOutputSerializer;
 
 import io.debezium.document.DocumentWriter;
 import io.debezium.relational.TableId;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges;
 
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class LegacySourceSplitSerializierVersion4 {
     public static void writeTableSchemas(
             Map<TableId, TableChanges.TableChange> tableSchemas, DataOutputSerializer out)
             throws IOException {
-        FlinkJsonTableChangeSerializer jsonSerializer = new FlinkJsonTableChangeSerializer();
+        JsonTableChangeSerializer jsonSerializer = new JsonTableChangeSerializer();
         DocumentWriter documentWriter = DocumentWriter.defaultWriter();
         final int size = tableSchemas.size();
         out.writeInt(size);

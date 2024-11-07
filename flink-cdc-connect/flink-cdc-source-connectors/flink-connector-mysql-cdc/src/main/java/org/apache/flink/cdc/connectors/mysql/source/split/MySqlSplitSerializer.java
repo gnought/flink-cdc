@@ -18,7 +18,6 @@
 package org.apache.flink.cdc.connectors.mysql.source.split;
 
 import org.apache.flink.cdc.connectors.mysql.source.offset.BinlogOffset;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
 import org.apache.flink.core.memory.DataInputDeserializer;
 import org.apache.flink.core.memory.DataOutputSerializer;
@@ -29,6 +28,7 @@ import io.debezium.document.Document;
 import io.debezium.document.DocumentReader;
 import io.debezium.document.DocumentWriter;
 import io.debezium.relational.TableId;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges.TableChange;
 
 import java.io.EOFException;
@@ -187,7 +187,7 @@ public final class MySqlSplitSerializer implements SimpleVersionedSerializer<MyS
 
     public static void writeTableSchemas(
             Map<TableId, TableChange> tableSchemas, DataOutputSerializer out) throws IOException {
-        FlinkJsonTableChangeSerializer jsonSerializer = new FlinkJsonTableChangeSerializer();
+        JsonTableChangeSerializer jsonSerializer = new JsonTableChangeSerializer();
         DocumentWriter documentWriter = DocumentWriter.defaultWriter();
         final int size = tableSchemas.size();
         out.writeInt(size);
@@ -225,7 +225,7 @@ public final class MySqlSplitSerializer implements SimpleVersionedSerializer<MyS
                     throw new IOException("Unknown version: " + version);
             }
             Document document = documentReader.read(tableChangeStr);
-            TableChange tableChange = FlinkJsonTableChangeSerializer.fromDocument(document, true);
+            TableChange tableChange = JsonTableChangeSerializer.fromDocument(document, true);
             tableSchemas.put(tableId, tableChange);
         }
         return tableSchemas;

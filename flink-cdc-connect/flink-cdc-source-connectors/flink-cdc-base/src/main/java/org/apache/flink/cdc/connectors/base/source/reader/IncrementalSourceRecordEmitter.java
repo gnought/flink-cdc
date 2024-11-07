@@ -24,12 +24,12 @@ import org.apache.flink.cdc.connectors.base.source.meta.split.SourceRecords;
 import org.apache.flink.cdc.connectors.base.source.meta.split.SourceSplitState;
 import org.apache.flink.cdc.connectors.base.source.metrics.SourceReaderMetrics;
 import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.connector.base.source.reader.RecordEmitter;
 import org.apache.flink.util.Collector;
 
 import io.debezium.document.Array;
 import io.debezium.relational.history.HistoryRecord;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.slf4j.Logger;
@@ -58,8 +58,8 @@ public class IncrementalSourceRecordEmitter<T>
         implements RecordEmitter<SourceRecords, T, SourceSplitState> {
 
     private static final Logger LOG = LoggerFactory.getLogger(IncrementalSourceRecordEmitter.class);
-    private static final FlinkJsonTableChangeSerializer TABLE_CHANGE_SERIALIZER =
-            new FlinkJsonTableChangeSerializer();
+    private static final JsonTableChangeSerializer TABLE_CHANGE_SERIALIZER =
+            new JsonTableChangeSerializer();
 
     protected final DebeziumDeserializationSchema<T> debeziumDeserializationSchema;
     protected final SourceReaderMetrics sourceReaderMetrics;

@@ -21,7 +21,6 @@ import org.apache.flink.cdc.connectors.base.source.meta.offset.Offset;
 import org.apache.flink.cdc.connectors.base.source.meta.offset.OffsetDeserializerSerializer;
 import org.apache.flink.cdc.connectors.base.source.meta.offset.OffsetFactory;
 import org.apache.flink.cdc.connectors.base.utils.SerializerUtils;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
 import org.apache.flink.core.memory.DataInputDeserializer;
 import org.apache.flink.core.memory.DataOutputSerializer;
@@ -32,6 +31,7 @@ import io.debezium.document.Document;
 import io.debezium.document.DocumentReader;
 import io.debezium.document.DocumentWriter;
 import io.debezium.relational.TableId;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges.TableChange;
 
 import java.io.IOException;
@@ -191,7 +191,7 @@ public abstract class SourceSplitSerializer
 
     public static void writeTableSchemas(
             Map<TableId, TableChange> tableSchemas, DataOutputSerializer out) throws IOException {
-        FlinkJsonTableChangeSerializer jsonSerializer = new FlinkJsonTableChangeSerializer();
+        JsonTableChangeSerializer jsonSerializer = new JsonTableChangeSerializer();
         DocumentWriter documentWriter = DocumentWriter.defaultWriter();
         final int size = tableSchemas.size();
         out.writeInt(size);
@@ -234,7 +234,7 @@ public abstract class SourceSplitSerializer
                     throw new IOException("Unknown version: " + version);
             }
             Document document = documentReader.read(tableChangeStr);
-            TableChange tableChange = FlinkJsonTableChangeSerializer.fromDocument(document, true);
+            TableChange tableChange = JsonTableChangeSerializer.fromDocument(document, true);
             tableSchemas.put(tableId, tableChange);
         }
         return tableSchemas;
