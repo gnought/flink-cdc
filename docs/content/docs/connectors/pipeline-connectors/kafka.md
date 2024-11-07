@@ -155,7 +155,7 @@ Usage Notes
 ### Output Format
 For different built-in `value.format` options, the output format is different:
 #### debezium-json
-Refer to [Debezium docs](https://debezium.io/documentation/reference/1.9/connectors/mysql.html), debezium-json format will contains `before`,`after`,`op`,`source` elements, but `ts_ms` is not included in `source`.    
+Refer to [Debezium docs](https://debezium.io/documentation/reference/2.0/connectors/mysql.html), debezium-json format will contains `before`,`after`,`op`,`source` elements, but `ts_ms` is not included in `source`.    
 An output example is:
 ```json
 {

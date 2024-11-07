@@ -193,7 +193,7 @@ public class DebeziumJsonSerializationSchema implements SerializationSchema<Even
 
     /**
      * Refer to <a
-     * href="https://debezium.io/documentation/reference/1.9/connectors/mysql.html">Debezium
+     * href="https://debezium.io/documentation/reference/2.0/connectors/mysql.html">Debezium
      * docs</a> for more details.
      */
     private static RowType createJsonRowType(DataType databaseSchema) {

@@ -152,7 +152,7 @@ public class SqlServerConnectorITCase extends SqlServerTestBase {
 
         // test schema change
         // sqlserver online schema update refer:
-        // https://debezium.io/documentation/reference/1.9/connectors/sqlserver.html#online-schema-updates
+        // https://debezium.io/documentation/reference/2.0/connectors/sqlserver.html#online-schema-updates
         try (Connection connection = getJdbcConnection();
                 Statement statement = connection.createStatement()) {
 
