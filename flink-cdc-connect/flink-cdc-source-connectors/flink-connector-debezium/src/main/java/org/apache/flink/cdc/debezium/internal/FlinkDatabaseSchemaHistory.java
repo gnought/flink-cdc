@@ -17,14 +17,13 @@
 
 package org.apache.flink.cdc.debezium.internal;
 
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
-
 import io.debezium.config.Configuration;
 import io.debezium.relational.TableId;
 import io.debezium.relational.Tables;
 import io.debezium.relational.ddl.DdlParser;
 import io.debezium.relational.history.HistoryRecord;
 import io.debezium.relational.history.HistoryRecordComparator;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.SchemaHistory;
 import io.debezium.relational.history.SchemaHistoryException;
 import io.debezium.relational.history.SchemaHistoryListener;
@@ -54,8 +53,8 @@ import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHist
  */
 public class FlinkDatabaseSchemaHistory implements SchemaHistory {
 
-    private final FlinkJsonTableChangeSerializer tableChangesSerializer =
-            new FlinkJsonTableChangeSerializer();
+    private final JsonTableChangeSerializer tableChangesSerializer =
+            new JsonTableChangeSerializer();
 
     private ConcurrentMap<TableId, SchemaRecord> latestTables;
     private String instanceName;
@@ -81,7 +80,7 @@ public class FlinkDatabaseSchemaHistory implements SchemaHistory {
         for (SchemaRecord schemaRecord : retrieveHistory(instanceName)) {
             // validate here
             TableChange tableChange =
-                    FlinkJsonTableChangeSerializer.fromDocument(
+                    JsonTableChangeSerializer.fromDocument(
                             schemaRecord.toDocument(), useCatalogBeforeSchema);
             latestTables.put(tableChange.getId(), schemaRecord);
         }
@@ -144,7 +143,7 @@ public class FlinkDatabaseSchemaHistory implements SchemaHistory {
         listener.recoveryStarted();
         for (SchemaRecord record : latestTables.values()) {
             TableChange tableChange =
-                    FlinkJsonTableChangeSerializer.fromDocument(
+                    JsonTableChangeSerializer.fromDocument(
                             record.getTableChangeDoc(), useCatalogBeforeSchema);
             schema.overwriteTable(tableChange.getTable());
         }
@@ -157,7 +156,7 @@ public class FlinkDatabaseSchemaHistory implements SchemaHistory {
         listener.recoveryStarted();
         for (SchemaRecord record : latestTables.values()) {
             TableChange tableChange =
-                    FlinkJsonTableChangeSerializer.fromDocument(
+                    JsonTableChangeSerializer.fromDocument(
                             record.getTableChangeDoc(), useCatalogBeforeSchema);
             schema.overwriteTable(tableChange.getTable());
         }

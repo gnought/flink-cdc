@@ -42,7 +42,6 @@ import org.apache.flink.cdc.connectors.mysql.table.StartupOptions;
 import org.apache.flink.cdc.connectors.mysql.testutils.RecordsFormatter;
 import org.apache.flink.cdc.connectors.mysql.testutils.UniqueDatabase;
 import org.apache.flink.cdc.debezium.DebeziumDeserializationSchema;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.connector.base.source.reader.RecordEmitter;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
@@ -63,6 +62,7 @@ import io.debezium.document.Array;
 import io.debezium.jdbc.JdbcConnection;
 import io.debezium.relational.TableId;
 import io.debezium.relational.history.HistoryRecord;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -726,8 +726,8 @@ public class MySqlSourceReaderTest extends MySqlSourceTestBase {
             implements RecordEmitter<SourceRecords, SourceRecord, MySqlSplitState> {
 
         private static final Logger LOG = LoggerFactory.getLogger(MySqlRecordEmitter.class);
-        private static final FlinkJsonTableChangeSerializer TABLE_CHANGE_SERIALIZER =
-                new FlinkJsonTableChangeSerializer();
+        private static final JsonTableChangeSerializer TABLE_CHANGE_SERIALIZER =
+                new JsonTableChangeSerializer();
 
         private final DebeziumDeserializationSchema<SourceRecord> debeziumDeserializationSchema;
         private final MySqlSourceReaderMetrics sourceReaderMetrics;

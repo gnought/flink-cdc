@@ -18,13 +18,13 @@
 package org.apache.flink.cdc.connectors.mysql.source.split;
 
 import org.apache.flink.cdc.connectors.mysql.source.offset.BinlogOffset;
-import org.apache.flink.cdc.debezium.history.FlinkJsonTableChangeSerializer;
 import org.apache.flink.table.types.logical.BigIntType;
 import org.apache.flink.table.types.logical.RowType;
 
 import io.debezium.document.Document;
 import io.debezium.document.DocumentReader;
 import io.debezium.relational.TableId;
+import io.debezium.relational.history.JsonTableChangeSerializer;
 import io.debezium.relational.history.TableChanges.TableChange;
 import org.junit.Test;
 
@@ -159,6 +159,6 @@ public class MySqlSplitSerializerTest {
                         + "\"typeExpression\":\"VARCHAR\",\"charsetName\":\"latin1\",\"length\":1024,"
                         + "\"position\":4,\"optional\":true,\"autoIncremented\":false,\"generated\":false}]}}";
         final Document doc = DocumentReader.defaultReader().read(tableChangeJsonStr);
-        return FlinkJsonTableChangeSerializer.fromDocument(doc, true);
+        return JsonTableChangeSerializer.fromDocument(doc, true);
     }
 }
