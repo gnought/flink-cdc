@@ -41,7 +41,7 @@ import io.debezium.connector.db2.Db2OffsetContext.Loader;
 import io.debezium.connector.db2.Db2Partition;
 import io.debezium.connector.db2.Db2TaskContext;
 import io.debezium.connector.db2.SourceInfo;
-import io.debezium.data.Envelope.FieldName;
+import io.debezium.data.Envelope;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.ErrorHandler;
 import io.debezium.pipeline.EventDispatcher;
@@ -262,7 +262,11 @@ public class Db2SourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         return schemaNameAdjuster;
     }
 
-    /** Copied from debezium for accessing here. */
+    /**
+     * Copied from Debezium 2.0.1.Final {@link io.debezium.connector.db2.Db2EventMetadataProvider}
+     *
+     * <p>Make it public to be accessible here.
+     */
     public static class Db2EventMetadataProvider implements EventMetadataProvider {
 
         @Override
@@ -271,7 +275,7 @@ public class Db2SourceFetchTaskContext extends JdbcSourceFetchTaskContext {
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }
@@ -285,7 +289,7 @@ public class Db2SourceFetchTaskContext extends JdbcSourceFetchTaskContext {
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }
@@ -300,7 +304,7 @@ public class Db2SourceFetchTaskContext extends JdbcSourceFetchTaskContext {
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }

@@ -41,7 +41,7 @@ import io.debezium.connector.sqlserver.SqlServerOffsetContext;
 import io.debezium.connector.sqlserver.SqlServerOffsetContext.Loader;
 import io.debezium.connector.sqlserver.SqlServerPartition;
 import io.debezium.connector.sqlserver.SqlServerTaskContext;
-import io.debezium.data.Envelope.FieldName;
+import io.debezium.data.Envelope;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.ErrorHandler;
 import io.debezium.pipeline.EventDispatcher;
@@ -276,7 +276,11 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
         return schemaNameAdjuster;
     }
 
-    /** Copied from debezium for accessing here. */
+    /**
+     * Copied from Debezium 2.0.1.Final
+     *
+     * <p>Make it public to be accessible here.
+     */
     public static class SqlServerEventMetadataProvider implements EventMetadataProvider {
 
         @Override
@@ -285,7 +289,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }
@@ -299,7 +303,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }
@@ -314,7 +318,7 @@ public class SqlServerSourceFetchTaskContext extends JdbcSourceFetchTaskContext 
             if (value == null) {
                 return null;
             }
-            final Struct sourceInfo = value.getStruct(FieldName.SOURCE);
+            final Struct sourceInfo = value.getStruct(Envelope.FieldName.SOURCE);
             if (source == null) {
                 return null;
             }

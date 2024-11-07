@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  *
  * @author Roman Kuchár <kucharrom@gmail.com>
  */
-/** Copied from {@link ColumnDefinitionParserListener} in Debezium v2.0.1.Final. */
+/** Copied from Debezium 2.0.1.Final {@link ColumnDefinitionParserListener}. */
 public class CustomColumnDefinitionParserListener extends MySqlParserBaseListener {
 
     private static final Logger LOGGER =

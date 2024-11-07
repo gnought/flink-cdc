@@ -42,6 +42,7 @@ import io.debezium.connector.mysql.MySqlOffsetContext;
 import io.debezium.connector.mysql.MySqlPartition;
 import io.debezium.connector.mysql.MySqlStreamingChangeEventSourceMetrics;
 import io.debezium.connector.mysql.MySqlTaskContext;
+import io.debezium.connector.mysql.SourceInfo;
 import io.debezium.data.Envelope;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.ErrorHandler;
@@ -311,16 +312,13 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         }
     }
 
-    /** Copied from debezium for accessing here. */
+    /**
+     * Copied from Debezium 2.0.1.Final {@link
+     * io.debezium.connector.mysql.MySqlEventMetadataProvider}
+     *
+     * <p>Make it public to be accessible here.
+     */
     public static class MySqlEventMetadataProvider implements EventMetadataProvider {
-        public static final String SERVER_ID_KEY = "server_id";
-
-        public static final String GTID_KEY = "gtid";
-        public static final String BINLOG_FILENAME_OFFSET_KEY = "file";
-        public static final String BINLOG_POSITION_OFFSET_KEY = "pos";
-        public static final String BINLOG_ROW_IN_EVENT_OFFSET_KEY = "row";
-        public static final String THREAD_KEY = "thread";
-        public static final String QUERY_KEY = "query";
 
         @Override
         public Instant getEventTimestamp(
@@ -347,12 +345,13 @@ public class MySqlSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
                 return null;
             }
             return Collect.hashMapOf(
-                    BINLOG_FILENAME_OFFSET_KEY,
-                    sourceInfo.getString(BINLOG_FILENAME_OFFSET_KEY),
-                    BINLOG_POSITION_OFFSET_KEY,
-                    Long.toString(sourceInfo.getInt64(BINLOG_POSITION_OFFSET_KEY)),
-                    BINLOG_ROW_IN_EVENT_OFFSET_KEY,
-                    Integer.toString(sourceInfo.getInt32(BINLOG_ROW_IN_EVENT_OFFSET_KEY)));
+                    SourceInfo.BINLOG_FILENAME_OFFSET_KEY,
+                    sourceInfo.getString(SourceInfo.BINLOG_FILENAME_OFFSET_KEY),
+                    SourceInfo.BINLOG_POSITION_OFFSET_KEY,
+                    Long.toString(sourceInfo.getInt64(SourceInfo.BINLOG_POSITION_OFFSET_KEY)),
+                    SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY,
+                    Integer.toString(
+                            sourceInfo.getInt32(SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY)));
         }
 
         @Override
