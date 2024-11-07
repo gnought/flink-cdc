@@ -40,7 +40,7 @@ public class OracleTypeUtils {
 
     /**
      * Returns a corresponding Flink data type from a debezium {@link Column} with nullable always
-     * be true, copy from io.debezium.connector.oracle.OracleValueConverters#converte.
+     * be true, copied from {@link io.debezium.connector.oracle.OracleValueConverters#converter}.
      */
     private static DataType convertFromColumn(Column column) {
         switch (column.jdbcType()) {

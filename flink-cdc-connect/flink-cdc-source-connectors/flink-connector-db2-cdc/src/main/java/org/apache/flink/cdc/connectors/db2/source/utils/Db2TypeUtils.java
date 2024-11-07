@@ -39,7 +39,7 @@ public class Db2TypeUtils {
 
     /**
      * Returns a corresponding Flink data type from a debezium {@link Column} with nullable always
-     * be true.copy from io.debezium.connector.db2.Db2ValueConverters#converte.
+     * be true, copied from {@link io.debezium.connector.db2.Db2ValueConverters#converter}.
      */
     private static DataType convertFromColumn(Column column) {
         switch (column.jdbcType()) {
