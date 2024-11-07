@@ -84,8 +84,7 @@ import java.util.function.Predicate;
 import static io.debezium.util.Strings.isNullOrEmpty;
 
 /**
- * Copied from Debezium project(2.0.1.Final) to fix
- * https://github.com/ververica/flink-cdc-connectors/issues/1944.
+ * Copied from Debezium 2.0.1.Final to fix https://github.com/apache/flink-cdc/issues/1944
  *
  * <p>Line 297: check rotate event timestamp != 0
  *

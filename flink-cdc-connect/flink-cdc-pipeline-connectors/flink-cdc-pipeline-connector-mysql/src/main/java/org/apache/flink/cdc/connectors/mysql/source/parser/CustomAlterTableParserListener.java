@@ -55,7 +55,7 @@ import static org.apache.flink.cdc.connectors.mysql.utils.MySqlTypeUtils.fromDbz
  * @author Roman Kuchár <kucharrom@gmail.com>
  */
 /**
- * Copied from {@link AlterTableParserListener} in Debezium v2.0.1.Final
+ * Copied from Debezium 2.0.1.Final {@link AlterTableParserListener}.
  *
  * <p>A lot of changes on how Flink parses ALTER Table for streaming changes without modifying
  * tableEditor.

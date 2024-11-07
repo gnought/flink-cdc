@@ -34,8 +34,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Copied from Debezium project(2.0.1.final) to add BIGINT and SMALLINT to TRIM_DATA_TYPES. Remove
- * this until https://issues.redhat.com/browse/DBZ-6824 is fixed in 2.3.3.Final.
+ * Copied from Debezium 2.0.1.Final to add BIGINT and SMALLINT to TRIM_DATA_TYPES. Remove this until
+ * https://issues.redhat.com/browse/DBZ-6824 is fixed in 2.3.3.Final.
  *
  * <p>Line 88 & 89: add BIGINT and SMALLINT to TRIM_DATA_TYPES.
  */

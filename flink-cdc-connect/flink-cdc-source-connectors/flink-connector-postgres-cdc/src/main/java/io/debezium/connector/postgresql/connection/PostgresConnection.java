@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
  * @author Horia Chiorean
  */
 /**
- * Copied from Debezium 2.0.1-Final with two additional methods:
+ * Copied from Debezium 2.0.1.Final with two additional methods:
  *
  * <ul>
  *   <li>Constructor PostgresConnection( Configuration config, PostgresValueConverterBuilder

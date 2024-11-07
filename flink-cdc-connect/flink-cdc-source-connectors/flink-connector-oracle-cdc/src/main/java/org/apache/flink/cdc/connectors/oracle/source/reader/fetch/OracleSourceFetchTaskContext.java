@@ -276,8 +276,13 @@ public class OracleSourceFetchTaskContext extends JdbcSourceFetchTaskContext {
         schema.recover(Offsets.of(partition, offset));
     }
 
-    /** Copied from debezium for accessing here. */
+    /**
+     * Copied from Debezium 2.0.1.Final
+     *
+     * <p>Make it public to be accessible here.
+     */
     public static class OracleEventMetadataProvider implements EventMetadataProvider {
+
         @Override
         public Instant getEventTimestamp(
                 DataCollectionId source, OffsetContext offset, Object key, Struct value) {

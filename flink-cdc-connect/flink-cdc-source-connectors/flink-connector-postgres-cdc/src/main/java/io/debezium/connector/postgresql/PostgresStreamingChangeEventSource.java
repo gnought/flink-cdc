@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /** @author Horia Chiorean (hchiorea@redhat.com), Jiri Pechanec */
 /**
- * Copied from Debezium 2.0.1.final
+ * Copied from Debezium 2.0.1.Final
  *
  * <p>Line 152~153 : set the ending lsn for the replication connection.
  */

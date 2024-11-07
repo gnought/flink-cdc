@@ -3,7 +3,6 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-
 package io.debezium.embedded;
 
 import org.apache.flink.cdc.debezium.internal.DebeziumChangeFetcher;
@@ -13,7 +12,8 @@ import io.debezium.engine.RecordChangeEvent;
 import org.apache.kafka.connect.source.SourceRecord;
 
 /**
- * Copied from Debezium project. Make it public to be accessible from {@link DebeziumChangeFetcher}.
+ * Copied from Debezium 2.0.1.Final. Make it public to be accessible from {@link
+ * DebeziumChangeFetcher}.
  */
 public class EmbeddedEngineChangeEvent<K, V> implements ChangeEvent<K, V>, RecordChangeEvent<V> {
 

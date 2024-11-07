@@ -17,11 +17,10 @@
 
 package org.apache.flink.cdc.connectors.mysql.debezium.dispatcher;
 
-import org.apache.flink.cdc.connectors.mysql.debezium.task.context.StatefulTaskContext;
-
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.connector.base.ChangeEventQueue;
 import io.debezium.connector.mysql.MySqlPartition;
+import io.debezium.connector.mysql.SourceInfo;
 import io.debezium.document.DocumentWriter;
 import io.debezium.pipeline.DataChangeEvent;
 import io.debezium.pipeline.EventDispatcher;
@@ -189,10 +188,8 @@ public class EventDispatcherImpl<T extends DataCollectionId>
             Map<String, Object> source = new HashMap<>();
             String fileName = sourceInfo.getString(BINLOG_FILENAME_OFFSET_KEY);
             Long pos = sourceInfo.getInt64(BINLOG_POSITION_OFFSET_KEY);
-            Long serverId =
-                    sourceInfo.getInt64(
-                            StatefulTaskContext.MySqlEventMetadataProvider.SERVER_ID_KEY);
-            source.put(StatefulTaskContext.MySqlEventMetadataProvider.SERVER_ID_KEY, serverId);
+            Long serverId = sourceInfo.getInt64(SourceInfo.SERVER_ID_KEY);
+            source.put(SourceInfo.SERVER_ID_KEY, serverId);
             source.put(BINLOG_FILENAME_OFFSET_KEY, fileName);
             source.put(BINLOG_POSITION_OFFSET_KEY, pos);
             HistoryRecord historyRecord =
