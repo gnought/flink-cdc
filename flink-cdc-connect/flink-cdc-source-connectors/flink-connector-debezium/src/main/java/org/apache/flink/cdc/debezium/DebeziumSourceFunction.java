@@ -88,7 +88,7 @@ import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHist
  * <p>There are two workers during the runtime. One worker periodically pulls records from the
  * database and pushes the records into the {@link Handover}. The other worker consumes the records
  * from the {@link Handover} and convert the records to the data in Flink style. The reason why
- * don't use one workers is because debezium has different behaviours in snapshot phase and
+ * don't use one worker because debezium has different behaviours in snapshot phase and
  * streaming phase.
  *
  * <p>Here we use the {@link Handover} as the buffer to submit data from the producer to the
@@ -107,7 +107,7 @@ import static org.apache.flink.cdc.debezium.utils.SchemaHistoryUtil.retrieveHist
  * <p>Note: currently, the source function can't run in multiple parallel instances.
  *
  * <p>Please refer to Debezium's documentation for the available configuration properties:
- * https://debezium.io/documentation/reference/1.9/development/engine.html#engine-properties
+ * https://debezium.io/documentation/reference/2.0/development/engine.html#engine-properties
  */
 @PublicEvolving
 public class DebeziumSourceFunction<T> extends RichSourceFunction<T>

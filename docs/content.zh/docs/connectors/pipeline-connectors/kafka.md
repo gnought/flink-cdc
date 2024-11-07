@@ -157,7 +157,7 @@ Pipeline 连接器配置项
 ### 输出格式
 对于不同的内置 `value.format` 选项，输出的格式也是不同的:
 #### debezium-json
-参考 [Debezium docs](https://debezium.io/documentation/reference/1.9/connectors/mysql.html)， debezium-json 格式会包含 `before`,`after`,`op`,`source` 几个元素， 但是 `ts_ms` 字段并不会包含在 `source` 元素中。    
+参考 [Debezium docs](https://debezium.io/documentation/reference/2.0/connectors/mysql.html)， debezium-json 格式会包含 `before`,`after`,`op`,`source` 几个元素， 但是 `ts_ms` 字段并不会包含在 `source` 元素中。    
 一个输出的示例是:
 ```json
 {
