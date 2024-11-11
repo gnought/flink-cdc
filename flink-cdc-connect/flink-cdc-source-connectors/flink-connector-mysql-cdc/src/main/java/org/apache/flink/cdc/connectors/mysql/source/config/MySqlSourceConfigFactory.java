@@ -306,8 +306,11 @@ public class MySqlSourceConfigFactory implements Serializable {
         props.setProperty("database.user", checkNotNull(username));
         props.setProperty("database.password", checkNotNull(password));
         props.setProperty("database.port", String.valueOf(port));
-        props.setProperty("database.fetchSize", String.valueOf(fetchSize));
-        props.setProperty("database.responseBuffering", "adaptive");
+        props.setProperty(
+                CommonConnectorConfig.DRIVER_CONFIG_PREFIX + "fetchSize",
+                String.valueOf(fetchSize));
+        props.setProperty(
+                CommonConnectorConfig.DRIVER_CONFIG_PREFIX + "responseBuffering", "adaptive");
         props.setProperty("database.connectionTimeZone", serverTimeZone);
         // database schema history
         props.setProperty(
