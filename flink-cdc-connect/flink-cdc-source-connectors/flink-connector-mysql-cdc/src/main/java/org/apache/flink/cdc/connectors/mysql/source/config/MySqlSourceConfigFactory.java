@@ -68,7 +68,6 @@ public class MySqlSourceConfigFactory implements Serializable {
     private boolean includeSchemaChanges = false;
     private boolean scanNewlyAddedTableEnabled = false;
     private boolean closeIdleReaders = false;
-    private Properties jdbcProperties;
     private Duration heartbeatInterval = MySqlSourceOptions.HEARTBEAT_INTERVAL.defaultValue();
     private Properties dbzProperties;
     private Map<ObjectPath, String> chunkKeyColumns = new HashMap<>();
@@ -237,12 +236,6 @@ public class MySqlSourceConfigFactory implements Serializable {
     /** Whether the {@link MySqlSource} should scan the newly added tables or not. */
     public MySqlSourceConfigFactory scanNewlyAddedTableEnabled(boolean scanNewlyAddedTableEnabled) {
         this.scanNewlyAddedTableEnabled = scanNewlyAddedTableEnabled;
-        return this;
-    }
-
-    /** Custom properties that will overwrite the default JDBC connection URL. */
-    public MySqlSourceConfigFactory jdbcProperties(Properties jdbcProperties) {
-        this.jdbcProperties = jdbcProperties;
         return this;
     }
 

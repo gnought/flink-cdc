@@ -242,11 +242,11 @@ pipeline:
           <td>The connection pool size.</td>
     </tr>
     <tr>
-          <td>jdbc.properties.*</td>
+          <td>debezium.driver.*</td>
           <td>optional</td>
           <td style="word-wrap: break-word;">20</td>
           <td>String</td>
-          <td>Option to pass custom JDBC URL properties. User can pass custom properties like 'jdbc.properties.useSSL' = 'false'.</td>
+          <td>Option to pass custom JDBC URL properties. User can pass custom properties like 'debezium.driver.useSSL' = 'false'.</td>
     </tr>
     <tr>
           <td>heartbeat.interval</td>

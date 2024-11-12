@@ -94,7 +94,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
     private final StartupOptions startupOptions;
     private final boolean scanNewlyAddedTableEnabled;
     private final boolean closeIdleReaders;
-    private final Properties jdbcProperties;
     private final Duration heartbeatInterval;
     private final String chunkKeyColumn;
     final boolean skipSnapshotBackFill;
@@ -132,7 +131,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
             StartupOptions startupOptions,
             boolean scanNewlyAddedTableEnabled,
             boolean closeIdleReaders,
-            Properties jdbcProperties,
             Duration heartbeatInterval,
             @Nullable String chunkKeyColumn,
             boolean skipSnapshotBackFill) {
@@ -158,7 +156,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
         this.startupOptions = startupOptions;
         this.scanNewlyAddedTableEnabled = scanNewlyAddedTableEnabled;
         this.closeIdleReaders = closeIdleReaders;
-        this.jdbcProperties = jdbcProperties;
         // Mutable attributes
         this.producedDataType = physicalSchema.toPhysicalRowDataType();
         this.metadataKeys = Collections.emptyList();
@@ -216,7 +213,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                             .deserializer(deserializer)
                             .scanNewlyAddedTableEnabled(scanNewlyAddedTableEnabled)
                             .closeIdleReaders(closeIdleReaders)
-                            .jdbcProperties(jdbcProperties)
                             .heartbeatInterval(heartbeatInterval)
                             .chunkKeyColumn(new ObjectPath(database, tableName), chunkKeyColumn)
                             .skipSnapshotBackfill(skipSnapshotBackFill)
@@ -302,7 +298,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                         startupOptions,
                         scanNewlyAddedTableEnabled,
                         closeIdleReaders,
-                        jdbcProperties,
                         heartbeatInterval,
                         chunkKeyColumn,
                         skipSnapshotBackFill);
@@ -344,7 +339,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                 && Objects.equals(startupOptions, that.startupOptions)
                 && Objects.equals(producedDataType, that.producedDataType)
                 && Objects.equals(metadataKeys, that.metadataKeys)
-                && Objects.equals(jdbcProperties, that.jdbcProperties)
                 && Objects.equals(heartbeatInterval, that.heartbeatInterval)
                 && Objects.equals(chunkKeyColumn, that.chunkKeyColumn)
                 && Objects.equals(skipSnapshotBackFill, that.skipSnapshotBackFill);
@@ -377,7 +371,6 @@ public class MySqlTableSource implements ScanTableSource, SupportsReadingMetadat
                 metadataKeys,
                 scanNewlyAddedTableEnabled,
                 closeIdleReaders,
-                jdbcProperties,
                 heartbeatInterval,
                 chunkKeyColumn,
                 skipSnapshotBackFill);

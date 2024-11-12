@@ -36,9 +36,9 @@ public class DebeziumUtilsTest {
     @Test
     void testCreateMySqlConnection() {
         // test without set useSSL
-        Properties jdbcProps = new Properties();
-        jdbcProps.setProperty("onlyTest", "test");
-        MySqlSourceConfig configWithoutUseSSL = getConfig(jdbcProps);
+        Properties dbzProps = new Properties();
+        dbzProps.setProperty("driver.onlyTest", "test");
+        MySqlSourceConfig configWithoutUseSSL = getConfig(dbzProps);
         MySqlConnection connection0 = DebeziumUtils.createMySqlConnection(configWithoutUseSSL);
         assertJdbcUrl(
                 "jdbc:mysql://localhost:3306/?useSSL=false&connectTimeout=20000&useInformationSchema=true"
@@ -47,8 +47,8 @@ public class DebeziumUtilsTest {
                 connection0.connectionString());
 
         // test with set useSSL=false
-        jdbcProps.setProperty("useSSL", "false");
-        MySqlSourceConfig configNotUseSSL = getConfig(jdbcProps);
+        dbzProps.setProperty("driver.useSSL", "false");
+        MySqlSourceConfig configNotUseSSL = getConfig(dbzProps);
         MySqlConnection connection1 = DebeziumUtils.createMySqlConnection(configNotUseSSL);
         assertJdbcUrl(
                 "jdbc:mysql://localhost:3306/?connectTimeout=20000&useInformationSchema=true"
@@ -57,8 +57,8 @@ public class DebeziumUtilsTest {
                 connection1.connectionString());
 
         // test with set useSSL=true
-        jdbcProps.setProperty("useSSL", "true");
-        MySqlSourceConfig configUseSSL = getConfig(jdbcProps);
+        dbzProps.setProperty("driver.useSSL", "true");
+        MySqlSourceConfig configUseSSL = getConfig(dbzProps);
         MySqlConnection connection2 = DebeziumUtils.createMySqlConnection(configUseSSL);
         assertJdbcUrl(
                 "jdbc:mysql://localhost:3306/?connectTimeout=20000&useInformationSchema=true"
@@ -67,7 +67,7 @@ public class DebeziumUtilsTest {
                 connection2.connectionString());
     }
 
-    private MySqlSourceConfig getConfig(Properties jdbcProperties) {
+    private MySqlSourceConfig getConfig(Properties dbzProperties) {
         return new MySqlSourceConfigFactory()
                 .startupOptions(StartupOptions.initial())
                 .databaseList("fakeDb")
@@ -81,7 +81,7 @@ public class DebeziumUtilsTest {
                 .username("fakeUser")
                 .password("fakePw")
                 .serverTimeZone(ZoneId.of("UTC").toString())
-                .jdbcProperties(jdbcProperties)
+                .debeziumProperties(dbzProperties)
                 .createConfig(0);
     }
 

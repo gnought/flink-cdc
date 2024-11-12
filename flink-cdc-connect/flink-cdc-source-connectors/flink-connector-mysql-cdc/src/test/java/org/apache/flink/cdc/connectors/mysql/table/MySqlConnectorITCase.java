@@ -162,9 +162,9 @@ public class MySqlConnectorITCase extends MySqlSourceTestBase {
     @Test
     public void testConsumingAllEventsUseSSL() throws Exception {
         runConsumingAllEventsTest(
-                ", 'jdbc.properties.useSSL'= 'true',"
-                        + " 'jdbc.properties.requireSSL'= 'true',"
-                        + " 'jdbc.properties.verifyServerCerticate'= 'false'");
+                ", 'debezium.driver.useSSL'= 'true',"
+                        + " 'debezium.driver.requireSSL'= 'true',"
+                        + " 'debezium.driver.verifyServerCertificate'= 'false'");
     }
 
     private void runConsumingAllEventsTest(String otherTableOptions) throws Exception {

@@ -113,7 +113,7 @@ public class OceanBaseE2eITCase extends FlinkContainerTestEnvironment {
                         " 'logproxy.port' = '2983',",
                         " 'rootserver-list' = '" + METADATA.getRsList() + "',",
                         " 'working-mode' = 'memory',",
-                        " 'jdbc.properties.useSSL' = 'false'",
+                        " 'debezium.driver.useSSL' = 'false'",
                         ");",
                         "CREATE TABLE ob_products_sink (",
                         " `id` INT NOT NULL,",

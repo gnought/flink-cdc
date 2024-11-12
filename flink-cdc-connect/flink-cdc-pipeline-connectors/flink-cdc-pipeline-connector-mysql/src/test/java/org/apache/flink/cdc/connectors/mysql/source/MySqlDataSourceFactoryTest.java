@@ -254,7 +254,7 @@ public class MySqlDataSourceFactoryTest extends MySqlSourceTestBase {
         options.put(USERNAME.key(), TEST_USER);
         options.put(PASSWORD.key(), TEST_PASSWORD);
         options.put(TABLES.key(), inventoryDatabase.getDatabaseName() + ".prod\\.*");
-        options.put("jdbc.properties.requireSSL", "true");
+        options.put("debezium.driver.requireSSL", "true");
         options.put("debezium.snapshot.mode", "initial");
         Factory.Context context = new MockContext(Configuration.fromMap(options));
 

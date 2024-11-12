@@ -413,11 +413,11 @@ OceanBase CDC 连接器包括用于 SQL 和 DataStream API 的选项，如下表
                 <td>全量读取时使用的 jdbc 驱动类名。</td>
             </tr>
             <tr>
-                <td>jdbc.properties.*</td>
+                <td>debezium.driver.*</td>
                 <td>否</td>
                 <td style="word-wrap: break-word;">无</td>
                 <td>String</td>
-                <td>传递自定义 JDBC URL 属性的选项。用户可以传递自定义属性，如 'jdbc.properties.useSSL' = 'false'。</td>
+                <td>传递自定义 JDBC URL 属性的选项。用户可以传递自定义属性，如 'debezium.driver.useSSL' = 'false'。</td>
             </tr>
             <tr>
                 <td>obcdc.properties.*</td>

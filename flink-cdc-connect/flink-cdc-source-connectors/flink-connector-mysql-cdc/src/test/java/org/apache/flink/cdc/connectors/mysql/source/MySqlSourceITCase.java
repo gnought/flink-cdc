@@ -862,7 +862,6 @@ public class MySqlSourceITCase extends MySqlSourceTestBase {
                 .startupOptions(StartupOptions.initial())
                 .deserializer(deserializer)
                 .scanNewlyAddedTableEnabled(false)
-                .jdbcProperties(new Properties())
                 .heartbeatInterval(Duration.ofSeconds(30))
                 .chunkKeyColumn(
                         new ObjectPath(customDatabase.getDatabaseName(), tableName),

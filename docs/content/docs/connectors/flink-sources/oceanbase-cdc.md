@@ -409,11 +409,11 @@ The OceanBase CDC Connector contains some options for both sql and stream api as
                 <td>JDBC driver class for snapshot reading.</td>
             </tr>
             <tr>
-                <td>jdbc.properties.*</td>
+                <td>debezium.driver.*</td>
                 <td>optional</td>
                 <td style="word-wrap: break-word;">(none)</td>
                 <td>String</td>
-                <td>Option to pass custom JDBC URL properties. User can pass custom properties like 'jdbc.properties.useSSL' = 'false'.</td>
+                <td>Option to pass custom JDBC URL properties. User can pass custom properties like 'debezium.driver.useSSL' = 'false'.</td>
             </tr>
             <tr>
                 <td>obcdc.properties.*</td>

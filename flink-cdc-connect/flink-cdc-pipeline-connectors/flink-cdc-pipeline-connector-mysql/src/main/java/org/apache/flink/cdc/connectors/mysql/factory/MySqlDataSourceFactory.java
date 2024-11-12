@@ -86,8 +86,6 @@ import static org.apache.flink.cdc.connectors.mysql.source.MySqlDataSourceOption
 import static org.apache.flink.cdc.connectors.mysql.source.utils.ObjectUtils.doubleCompare;
 import static org.apache.flink.cdc.debezium.table.DebeziumOptions.DEBEZIUM_OPTIONS_PREFIX;
 import static org.apache.flink.cdc.debezium.table.DebeziumOptions.getDebeziumProperties;
-import static org.apache.flink.cdc.debezium.utils.JdbcUrlUtils.PROPERTIES_PREFIX;
-import static org.apache.flink.cdc.debezium.utils.JdbcUrlUtils.getJdbcProperties;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /** A {@link Factory} to create {@link MySqlDataSource}. */
@@ -100,8 +98,7 @@ public class MySqlDataSourceFactory implements DataSourceFactory {
 
     @Override
     public DataSource createDataSource(Context context) {
-        FactoryHelper.createFactoryHelper(this, context)
-                .validateExcept(PROPERTIES_PREFIX, DEBEZIUM_OPTIONS_PREFIX);
+        FactoryHelper.createFactoryHelper(this, context).validateExcept(DEBEZIUM_OPTIONS_PREFIX);
 
         final Configuration config = context.getFactoryConfiguration();
         String hostname = config.get(HOSTNAME);
@@ -169,7 +166,6 @@ public class MySqlDataSourceFactory implements DataSourceFactory {
                         .closeIdleReaders(closeIdleReaders)
                         .includeSchemaChanges(includeSchemaChanges)
                         .debeziumProperties(getDebeziumProperties(configMap))
-                        .jdbcProperties(getJdbcProperties(configMap))
                         .scanNewlyAddedTableEnabled(scanNewlyAddedTableEnabled);
 
         List<TableId> tableIds = MySqlSchemaUtils.listTables(configFactory.createConfig(0), null);

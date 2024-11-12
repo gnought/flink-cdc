@@ -65,7 +65,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
     private final int port;
     private final String compatibleMode;
     private final String jdbcDriver;
-    private final Properties jdbcProperties;
 
     private final String logProxyHost;
     private final Integer logProxyPort;
@@ -102,7 +101,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
             int port,
             String compatibleMode,
             String jdbcDriver,
-            Properties jdbcProperties,
             String logProxyHost,
             Integer logProxyPort,
             String logProxyClientId,
@@ -126,7 +124,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
         this.port = port;
         this.compatibleMode = compatibleMode;
         this.jdbcDriver = jdbcDriver;
-        this.jdbcProperties = jdbcProperties;
         this.logProxyHost = logProxyHost;
         this.logProxyPort = logProxyPort;
         this.logProxyClientId = logProxyClientId;
@@ -181,7 +178,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
                         .port(port)
                         .compatibleMode(compatibleMode)
                         .jdbcDriver(jdbcDriver)
-                        .jdbcProperties(jdbcProperties)
                         .logProxyHost(logProxyHost)
                         .logProxyPort(logProxyPort)
                         .logProxyClientId(logProxyClientId)
@@ -243,7 +239,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
                         port,
                         compatibleMode,
                         jdbcDriver,
-                        jdbcProperties,
                         logProxyHost,
                         logProxyPort,
                         logProxyClientId,
@@ -281,7 +276,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
                 && Objects.equals(this.port, that.port)
                 && Objects.equals(this.compatibleMode, that.compatibleMode)
                 && Objects.equals(this.jdbcDriver, that.jdbcDriver)
-                && Objects.equals(this.jdbcProperties, that.jdbcProperties)
                 && Objects.equals(this.logProxyHost, that.logProxyHost)
                 && Objects.equals(this.logProxyPort, that.logProxyPort)
                 && Objects.equals(this.logProxyClientId, that.logProxyClientId)
@@ -312,7 +306,6 @@ public class OceanBaseTableSource implements ScanTableSource, SupportsReadingMet
                 port,
                 compatibleMode,
                 jdbcDriver,
-                jdbcProperties,
                 logProxyHost,
                 logProxyPort,
                 logProxyClientId,

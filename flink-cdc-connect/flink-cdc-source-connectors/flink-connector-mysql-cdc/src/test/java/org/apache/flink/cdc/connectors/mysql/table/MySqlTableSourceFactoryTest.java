@@ -124,7 +124,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -170,7 +169,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         "testCol",
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -212,7 +210,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -252,7 +249,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.latest(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -270,7 +266,7 @@ public class MySqlTableSourceFactoryTest {
         options.put("debezium.offset.flush.interval.ms", "3000");
         options.put("debezium.tombstones.on.delete", "true");
         options.put("debezium.test", "test");
-        options.put("jdbc.properties.useSSL", "false");
+        options.put("debezium.driver.useSSL", "false");
         options.put("heartbeat.interval", "15213ms");
         options.put("scan.incremental.snapshot.chunk.key-column", "testCol");
         options.put("scan.incremental.close-idle-reader.enabled", "true");
@@ -282,8 +278,7 @@ public class MySqlTableSourceFactoryTest {
         dbzProperties.put("offset.flush.interval.ms", "3000");
         dbzProperties.put("tombstones.on.delete", "true");
         dbzProperties.put("test", "test");
-        Properties jdbcProperties = new Properties();
-        jdbcProperties.setProperty("useSSL", "false");
+        dbzProperties.put("driver.useSSL", "false");
         MySqlTableSource expectedSource =
                 new MySqlTableSource(
                         SCHEMA,
@@ -308,7 +303,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         true,
                         true,
-                        jdbcProperties,
                         Duration.ofMillis(15213),
                         "testCol",
                         true);
@@ -362,7 +356,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.specificOffset(offsetFile, offsetPos),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -400,7 +393,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -439,7 +431,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.earliest(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -479,7 +470,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.timestamp(0L),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -517,7 +507,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.latest(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
@@ -560,7 +549,6 @@ public class MySqlTableSourceFactoryTest {
                         StartupOptions.initial(),
                         false,
                         false,
-                        new Properties(),
                         HEARTBEAT_INTERVAL.defaultValue(),
                         null,
                         SCAN_INCREMENTAL_SNAPSHOT_BACKFILL_SKIP.defaultValue());
